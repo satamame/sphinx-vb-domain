@@ -3,6 +3,8 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from sphinx_vb_domain.vb_domain import VBDomain
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -27,3 +29,8 @@ language = 'ja'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+
+# -- Custom Setup ------------------------------------------------------------
+def setup(app):
+    app.add_domain(VBDomain)
