@@ -30,6 +30,11 @@ language = 'ja'
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
+# -- Options for MyST-Parser -------------------------------------------------
+myst_enable_extensions = [
+    'fieldlist',
+]
+
 
 # -- Custom Setup ------------------------------------------------------------
 def setup(app):
