@@ -3,7 +3,15 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import sys
+
 from sphinx_vb_domain.vb_domain import VBDomain
+
+# -- Path setup --------------------------------------------------------------
+
+sys.path.insert(0, os.path.abspath('../../macros'))
+
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -17,6 +25,8 @@ author = 'satamame.com'
 
 extensions = [
     'myst_parser',
+    'sphinx.ext.autodoc',
+    'sphinx_vb_domain',
 ]
 
 templates_path = ['_templates']

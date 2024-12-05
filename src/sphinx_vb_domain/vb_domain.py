@@ -11,6 +11,7 @@ class VBDomain(Domain):
     '''Domain for Visual Basic
     '''
     name = 'vb'
+    label = 'Visual Basic'
 
     class VBFunction(ObjectDescription):
         has_content = True
