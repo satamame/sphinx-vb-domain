@@ -10,7 +10,7 @@ from sphinx_vb_domain.vb_domain import VBDomain
 
 # -- Path setup --------------------------------------------------------------
 
-sys.path.insert(0, os.path.abspath('../../macros'))
+sys.path.insert(0, os.path.abspath('../../macros'))  # 何のため？
 
 
 # -- Project information -----------------------------------------------------
