@@ -13,7 +13,7 @@ from sphinx.roles import XRefRole
 
 
 class VBXRefRole(XRefRole):
-    '''For VBDomain's cross-reference e.g. func role (vb:func)
+    '''For VBDomain's cross-reference e.g. func role (vb:func).
     '''
     # Visual Basic 固有のリンク処理が必要な場合は process_link() を
     # オーバーライドする。
@@ -21,12 +21,13 @@ class VBXRefRole(XRefRole):
 
 
 class VBFunction(ObjectDescription):
-    '''For function directive (vb:function)
+    '''For function directive (vb:function).
     '''
     # Class variables are function directive's specs.
     has_content = True  # for function summary or details.
     required_arguments = 1  # 1 arg is enough as whole declaration.
     option_spec = {
+        'module': directives.unchanged,
         'param': directives.unchanged,
         'type': directives.unchanged,
         'returns': directives.unchanged,
@@ -36,12 +37,19 @@ class VBFunction(ObjectDescription):
             self, sig: str, signode: desc_signature) -> ObjDescT:
         '''Parse the function signature and add nodes to the signode.
 
+        This function will be called from autodoc.
+
         Parameters
         ----------
-        sig: str
-            Function declaration from first arg of the directive.
-        signode: desc_signature
-            Options of the directive.
+        sig : str
+            Function declaration from VB source code.
+        signode : desc_signature
+            Node for signature structure.
+
+        Returns
+        -------
+        ObjDescT
+            Object identifier.
         '''
         # Split signature into 3 parts
         match = re.match(r'^(.*?)\s*(\(.*?\))?\s*(As\s+.+)?$', sig)
@@ -51,7 +59,8 @@ class VBFunction(ObjectDescription):
         # Part 1: access modifier and function name
         access_and_name = match.group(1).strip()
         # Part 2: parameters (without ())
-        params = match.group(2).strip("()") if match.group(2) else ""
+        parameters = match.group(2).strip("()") if match.group(2) else ""
+        args = [arg.strip() for arg in parameters.split(',')]
         # Part 3: return type
         return_type = match.group(3).removeprefix("As").strip() \
             if match.group(3) else ""
@@ -71,25 +80,60 @@ class VBFunction(ObjectDescription):
         else:
             access_modifier = ''
 
-        func_type = parts.pop(0)  # "Function" or "Sub"
-        func_name = parts.pop(0)  # e.g., "MyFunction"
+        # Extract function type ("Function" or "Sub")
+        func_type = parts.pop(0) if len(parts) > 0 else ''
+        if func_type not in ('Function', 'Sub'):
+            raise ValueError(f'No "Function" or "Sub" in "{sig}".')
 
-        # Add function name to the signode for rendering
+        # Extract function name
+        func_name = parts.pop(0) if len(parts) > 0 else ''
+        if not func_name:
+            raise ValueError(f'No Function name in "{sig}".')
+
+        # Add access modifier to signode
+        if access_modifier:
+            signode += addnodes.desc_annotation(
+                access_modifier + ' ', access_modifier + ' ')
+
+        # Add function type to signode
+        signode += addnodes.desc_annotation(func_type + ' ', func_type + ' ')
+
+        # Add function name to signode
         signode += addnodes.desc_name(func_name, func_name)
 
-        # Return the parsed information as a tuple or dictionary
-        return {
-            'access_modifier': access_modifier,
-            'func_type': func_type,
-            'func_name': func_name,
-            'params': params,
-            'return_type': return_type,
-        }
+        # Add param list to signode
+        paramlist = addnodes.desc_parameterlist()
+        for arg in args:
+            if ' As ' not in arg:
+                raise ValueError(f'No type for arg "{arg}" in "{sig}".')
+            name, type_info = arg.split(' As ')
+            param = addnodes.desc_parameter('', '')
+            param += addnodes.desc_sig_name('', name)
+            param += addnodes.desc_sig_punctuation('', ' As ')
+            param += addnodes.desc_sig_keyword('', type_info)
+            paramlist += param
+        signode += paramlist
+
+        # Add return type to signode
+        if return_type:
+            signode += addnodes.desc_returns(
+                ' As ' + return_type, ' As ' + return_type)
+
+        # モジュール名の取得（例：環境変数を利用）
+        module_name = self.env.ref_context.get('vb:module')
+
+        # Return Object identifier.
+        if module_name:
+            return f'{module_name}.{func_name}'
+        else:
+            return func_name
 
     def run(self) -> list:
-        '''Make a section with function-info nodes from Function directive
+        '''Make a section with function-info nodes from Function directive.
         '''
         sig_result = self.handle_signature(self.arguments[0], self.options)
+
+        # TODO: sig_result は (モジュール名+)関数名 なので、そのように扱う。
 
         # 関数ノードの作成
         # (太字で強調表示されたアクセス指定子, 関数タイプ, 関数名)
@@ -107,7 +151,7 @@ class VBFunction(ObjectDescription):
         return_node = nodes.paragraph()
         return_node += nodes.inline(text=f"As {sig_result['return_type']}")
 
-        # すべてのノードを含むセクションの作成
+        # ここまでのノードを含むセクションの作成
         section = nodes.section()
         section += func_node
         section += args_node
@@ -118,20 +162,43 @@ class VBFunction(ObjectDescription):
     def add_target_and_index(
             self, name: ObjDescT, sig: str, signode: desc_signature
             ) -> None:
+        '''Add cross-reference id and index entry.
+
+        Parameters
+        ----------
+        name: ObjDescT
+            Object name (function name).
+        sig: str
+            Function declaration from first arg of the directive.
+        signode: desc_signature
+            Node for signature structure.
+        '''
+        objects = self.env.domaindata['vb']['objects']
+        objects[name] = (self.env.docname, self.objtype, sig)
+
         super().add_target_and_index(name, sig, signode)
 
 
 class VBModule(Directive):
-    '''For module directive (vb:module)
+    '''For module directive (vb:module).
     '''
     # Class variables are module directive's specs.
     has_content = True  # for module summary or details.
     required_arguments = 1  # 1 arg is enough as whole declaration.
     option_spec = {}
 
+    def run(self):
+        pass
+
+    def parse_arguments(self):
+        pass
+
+    def parse_options(self):
+        pass
+
 
 class VBDomain(Domain):
-    '''Domain for Visual Basic
+    '''Domain for Visual Basic.
     '''
     name = 'vb'
     label = 'Visual Basic'
