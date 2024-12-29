@@ -51,21 +51,21 @@ class VBFunction(ObjectDescription):
         ObjDescT
             Object identifier.
         '''
-        # Split signature into 3 parts
+        # Split signature into 3 parts.
         match = re.match(r'^(.*?)\s*(\(.*?\))?\s*(As\s+.+)?$', sig)
         if not match:
             raise ValueError(f"Invalid signature: {sig}")
 
-        # Part 1: access modifier and function name
+        # Part 1: access modifier and function name.
         access_and_name = match.group(1).strip()
-        # Part 2: parameters (without ())
+        # Part 2: parameters (without ()).
         parameters = match.group(2).strip("()") if match.group(2) else ""
         args = [arg.strip() for arg in parameters.split(',')]
-        # Part 3: return type
+        # Part 3: return type.
         return_type = match.group(3).removeprefix("As").strip() \
             if match.group(3) else ""
 
-        # Extract access modifier
+        # Extract access modifier.
         valid_modifiers = [
             'Public', 'Private', 'Protected', 'Friend', 'Protected Friend',
             'Private Protected']
@@ -80,46 +80,43 @@ class VBFunction(ObjectDescription):
         else:
             access_modifier = ''
 
-        # Extract function type ("Function" or "Sub")
+        # Extract function type ("Function" or "Sub").
         func_type = parts.pop(0) if len(parts) > 0 else ''
         if func_type not in ('Function', 'Sub'):
             raise ValueError(f'No "Function" or "Sub" in "{sig}".')
 
-        # Extract function name
+        # Extract function name.
         func_name = parts.pop(0) if len(parts) > 0 else ''
         if not func_name:
             raise ValueError(f'No Function name in "{sig}".')
 
-        # Add access modifier to signode
+        # Add access modifier to signode (e.g. 'Public ').
         if access_modifier:
             signode += addnodes.desc_annotation(
                 access_modifier + ' ', access_modifier + ' ')
 
-        # Add function type to signode
+        # Add function type to signode (e.g. 'Function ').
         signode += addnodes.desc_annotation(func_type + ' ', func_type + ' ')
 
-        # Add function name to signode
+        # Add function name to signode (e.g. 'MuFunc').
         signode += addnodes.desc_name(func_name, func_name)
 
-        # Add param list to signode
+        # Add param list to signode.
         paramlist = addnodes.desc_parameterlist()
         for arg in args:
             if ' As ' not in arg:
                 raise ValueError(f'No type for arg "{arg}" in "{sig}".')
-            name, type_info = arg.split(' As ')
-            param = addnodes.desc_parameter('', '')
-            param += addnodes.desc_sig_name('', name)
-            param += addnodes.desc_sig_punctuation('', ' As ')
-            param += addnodes.desc_sig_keyword('', type_info)
+            # Add param (e.g. 'Arg1 As Integer').
+            param = addnodes.desc_parameter('', arg)
             paramlist += param
         signode += paramlist
 
-        # Add return type to signode
+        # Add return type to signode (e.g. ' As String').
         if return_type:
             signode += addnodes.desc_returns(
                 ' As ' + return_type, ' As ' + return_type)
 
-        # モジュール名の取得（例：環境変数を利用）
+        # モジュール名の取得 (例：環境変数を利用).
         module_name = self.env.ref_context.get('vb:module')
 
         # Return Object identifier.
