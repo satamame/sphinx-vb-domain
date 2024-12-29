@@ -5,12 +5,15 @@ from docutils.nodes import Element
 from docutils.parsers.rst import directives, Directive
 from sphinx import addnodes
 from sphinx.addnodes import pending_xref, desc_signature
+from sphinx.application import Sphinx
 from sphinx.builders import Builder
 from sphinx.directives import ObjectDescription, ObjDescT
 from sphinx.domains import Domain
 from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
 from sphinx.util.nodes import make_id
+
+__version__ = '0.1.0'
 
 
 class VBXRefRole(XRefRole):
@@ -193,6 +196,7 @@ class VBDomain(Domain):
         "functions": {},  # function name -> (docname, synopsis)
         "classes": {},    # class name -> (docname, synopsis)
         "modules": {},    # module name -> (docname, synopsis)
+        "objects": {},    # object name -> (docname, objtype, signature)
     }
 
     def get_objects(self) -> None:
@@ -209,3 +213,9 @@ class VBDomain(Domain):
             self, env: BuildEnvironment, docname: str,
             document: nodes.document) -> None:
         super().process_doc(env, docname, document)
+
+
+def setup(app: Sphinx):
+    '''Set up extension
+    '''
+    app.add_domain(VBDomain)

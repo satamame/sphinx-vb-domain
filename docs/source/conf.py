@@ -6,8 +6,6 @@
 import os
 import sys
 
-from sphinx_vb_domain.vb_domain import VBDomain
-
 # -- Path setup --------------------------------------------------------------
 
 sys.path.insert(0, os.path.abspath('../../macros'))  # 何のため？
@@ -44,8 +42,3 @@ html_static_path = ['_static']
 myst_enable_extensions = [
     'fieldlist',
 ]
-
-
-# -- Custom Setup ------------------------------------------------------------
-def setup(app):
-    app.add_domain(VBDomain)

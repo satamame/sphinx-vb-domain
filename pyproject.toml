@@ -1,5 +1,5 @@
 [project]
-name = "vb-domain"
+name = "sphinx-vb-domain"
 version = "0.1.0"
 description = "Add your description here"
 authors = [

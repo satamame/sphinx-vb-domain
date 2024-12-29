@@ -2,7 +2,7 @@
 
 🚧
 
-```{function} Private Sub samplePrivateProcedure(ByVal num As Integer)
+```{vb:function} Private Sub samplePrivateProcedure(ByVal num As Integer)
 
 かんたんなプライベートプロシージャ
 
