@@ -10,6 +10,7 @@ from sphinx.directives import ObjectDescription, ObjDescT
 from sphinx.domains import Domain
 from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
+from sphinx.util.nodes import make_id
 
 
 class VBXRefRole(XRefRole):
@@ -128,21 +129,31 @@ class VBFunction(ObjectDescription):
     def add_target_and_index(
             self, name: ObjDescT, sig: str, signode: desc_signature
             ) -> None:
-        '''Add cross-reference id and index entry.
+        '''Add cross-reference id and index entry to domaindata.
 
         Parameters
         ----------
         name: ObjDescT
-            Object name (function name).
+            Object identifier (module_name.function_name).
         sig: str
             Function declaration from first arg of the directive.
         signode: desc_signature
             Node for signature structure.
         '''
         objects = self.env.domaindata['vb']['objects']
+        # Add tuple (document_name, object_type (Function), and signature).
         objects[name] = (self.env.docname, self.objtype, sig)
 
-        super().add_target_and_index(name, sig, signode)
+        # クロスリファレンス用のターゲットを追加.
+        node_id = make_id(self.env, self.state.document, self.objtype, name)
+        signode['ids'].append(node_id)
+        self.state.document.note_explicit_target(signode)
+
+        # インデックスエントリーを追加.
+        indextext = f'{name} (VB function)'
+        self.indexnode['entries'].append(
+            ('single', indextext, node_id, '', None)
+        )
 
 
 class VBModule(Directive):
