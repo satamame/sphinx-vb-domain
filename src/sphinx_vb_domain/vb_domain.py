@@ -128,37 +128,6 @@ class VBFunction(ObjectDescription):
         else:
             return func_name
 
-    def run(self) -> list:
-        '''Make a section with function-info nodes from Function directive.
-        '''
-        sig_result = self.handle_signature(self.arguments[0], self.options)
-
-        # TODO: sig_result は (モジュール名+)関数名 なので、そのように扱う。
-
-        # 関数ノードの作成
-        # (太字で強調表示されたアクセス指定子, 関数タイプ, 関数名)
-        func_node = nodes.paragraph()
-        text = sig_result['func_type'] + ' ' + sig_result['func_name']
-        if sig_result['access_modifier']:
-            text = sig_result['access_modifier'] + ' ' + text
-        func_node += nodes.strong(text=text)
-
-        # 引数ノードの作成 (斜体で強調表示された「引数」)
-        args_node = nodes.paragraph()
-        args_node += nodes.emphasis(text=f"({sig_result['params']})")
-
-        # 戻り値ノードの作成 (インライン描画される「戻り値の型」)
-        return_node = nodes.paragraph()
-        return_node += nodes.inline(text=f"As {sig_result['return_type']}")
-
-        # ここまでのノードを含むセクションの作成
-        section = nodes.section()
-        section += func_node
-        section += args_node
-        section += return_node
-
-        return [section]
-
     def add_target_and_index(
             self, name: ObjDescT, sig: str, signode: desc_signature
             ) -> None:
