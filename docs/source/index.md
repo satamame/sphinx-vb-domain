@@ -4,7 +4,7 @@
 
 ```{vb:function} Private Function getId(ByVal name As String, ByVal age As Integer) As Integer
 
-かんたんなプライベートプロシージャ
+かんたんなプライベート関数
 
 :param name: 名前
 :type name: String
@@ -12,4 +12,6 @@
 :type age: Integer
 :returns: id
 :rtype: Integer
+
+ここに remarks を書く。
 ```

@@ -11,6 +11,7 @@ from sphinx.directives import ObjectDescription, ObjDescT
 from sphinx.domains import Domain
 from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
+from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
 from sphinx.util.nodes import make_id
 
 __version__ = '0.1.0'
@@ -21,6 +22,7 @@ class VBXRefRole(XRefRole):
     '''
     # Visual Basic 固有のリンク処理が必要な場合は process_link() を
     # オーバーライドする。
+    # TODO: 不要ならこのクラスを削除する。
     pass
 
 
@@ -31,11 +33,22 @@ class VBFunction(ObjectDescription):
     has_content = True  # for function summary or details.
     required_arguments = 1  # 1 arg is enough as whole declaration.
     option_spec = {
-        'module': directives.unchanged,
         'param': directives.unchanged,
         'type': directives.unchanged,
         'returns': directives.unchanged,
+        'rtype': directives.unchanged,
     }
+
+    doc_field_types = [
+        TypedField(
+            'parameter', label='パラメータ',
+            names=('param', 'parameter', 'arg', 'argument'),
+            typerolename='vbtype', typenames=('type',)),
+        Field('returnvalue', label='戻り値', has_arg=False,
+              names=('returns', 'return')),
+        Field('returntype', label='戻り値の型', has_arg=False,
+              names=('rtype',)),
+    ]
 
     def handle_signature(
             self, sig: str, signode: desc_signature) -> ObjDescT:
@@ -132,7 +145,7 @@ class VBFunction(ObjectDescription):
     def add_target_and_index(
             self, name: ObjDescT, sig: str, signode: desc_signature
             ) -> None:
-        '''Add cross-reference id and index entry to domaindata.
+        '''Add cross-reference id to signode, and index to index entries.
 
         Parameters
         ----------
@@ -157,6 +170,12 @@ class VBFunction(ObjectDescription):
         self.indexnode['entries'].append(
             ('single', indextext, node_id, '', None)
         )
+
+    def transform_content(self, contentnode):
+        super().transform_content(contentnode)
+
+        transformer = DocFieldTransformer(self)
+        transformer.transform_all(contentnode)
 
 
 class VBModule(Directive):
@@ -188,6 +207,7 @@ class VBDomain(Domain):
         'module': VBModule,
     }
     roles = {
+        'vbtype': XRefRole(innernodeclass=nodes.emphasis),
         'func': VBXRefRole(),
     }
 
