@@ -2,10 +2,14 @@
 
 🚧
 
-```{vb:function} Private Sub samplePrivateProcedure(ByVal num As Integer)
+```{vb:function} Private Function getId(ByVal name As String, ByVal age As Integer) As Integer
 
 かんたんなプライベートプロシージャ
 
-:param num: 数字
-:type num: Integer
+:param name: 名前
+:type name: String
+:param age: 年齢
+:type age: Integer
+:returns: id
+:rtype: Integer
 ```

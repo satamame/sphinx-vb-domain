@@ -110,14 +110,14 @@ class VBFunction(ObjectDescription):
         for arg in args:
             if ' As ' not in arg:
                 raise ValueError(f'No type for arg "{arg}" in "{sig}".')
-            # Add param (e.g. 'Arg1 As Integer').
+            # Add param (e.g. 'ByVal arg1 As Integer').
             param = addnodes.desc_parameter('', arg)
             paramlist += param
         signode += paramlist
 
         # Add return type to signode (e.g. ' As String').
         if return_type:
-            signode += addnodes.desc_returns(
+            signode += nodes.emphasis(
                 ' As ' + return_type, ' As ' + return_type)
 
         # モジュール名の取得 (例：環境変数を利用).
