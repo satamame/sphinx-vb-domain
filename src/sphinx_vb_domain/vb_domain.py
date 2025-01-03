@@ -14,8 +14,6 @@ from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
 from sphinx.util.nodes import make_id
 
-__version__ = '0.1.0'
-
 
 class VBXRefRole(XRefRole):
     '''For VBDomain's cross-reference e.g. func role (vb:func).
@@ -236,6 +234,6 @@ class VBDomain(Domain):
 
 
 def setup(app: Sphinx):
-    '''Set up extension
+    '''Set up vb_domain feature.
     '''
     app.add_domain(VBDomain)
