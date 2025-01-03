@@ -25,6 +25,8 @@ if errorlevel 9009 (
 
 if "%1" == "" goto help
 
+if "%2" == "auto" set SPHINXOPTS=-D vb_autodoc=1
+
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 

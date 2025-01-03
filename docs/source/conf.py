@@ -38,5 +38,4 @@ myst_enable_extensions = [
 
 # -- Options for sphinx_vb_domain --------------------------------------------
 
-vb_autodoc = True
 vb_autodoc_paths = [('../../macros/001', 'modules')]
