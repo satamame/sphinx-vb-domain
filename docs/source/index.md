@@ -3,4 +3,5 @@
 ```{toctree}
 md
 rest
+modules
 ```
