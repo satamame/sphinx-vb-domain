@@ -8,12 +8,13 @@ from sphinx.application import Sphinx
 AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title'])
 
 
-def generate_module_content(src: Path, module_name: str):
+def generate_module_content(src_file: Path, module_name: str):
     '''Generate reST content per module
     '''
     content = f"\n{module_name}\n{'-' * len(module_name)}\n\n"
 
-    # TODO: 実装する
+    # TODO: src_file から関数の情報を取得して content に vb:function
+    # ディレクティブを追加する。
 
     return content
 

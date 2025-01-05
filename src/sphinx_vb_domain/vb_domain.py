@@ -1,3 +1,4 @@
+import hashlib
 import re
 
 from docutils import nodes
@@ -31,10 +32,7 @@ class VBFunction(ObjectDescription):
     has_content = True  # for function summary or details.
     required_arguments = 1  # 1 arg is enough as whole declaration.
     option_spec = {
-        'param': directives.unchanged,
-        'type': directives.unchanged,
-        'returns': directives.unchanged,
-        'rtype': directives.unchanged,
+        'module': directives.unchanged,
     }
 
     doc_field_types = [
@@ -131,10 +129,8 @@ class VBFunction(ObjectDescription):
             signode += nodes.emphasis(
                 ' As ' + return_type, ' As ' + return_type)
 
-        # モジュール名の取得 (例：環境変数を利用).
-        module_name = self.env.ref_context.get('vb:module')
-
         # Return Object identifier.
+        module_name = self.options.get('module', '')
         if module_name:
             return f'{module_name}.{func_name}'
         else:
@@ -158,8 +154,15 @@ class VBFunction(ObjectDescription):
         # Add tuple (document_name, object_type (Function), and signature).
         objects[name] = (self.env.docname, self.objtype, sig)
 
-        # クロスリファレンス用のターゲットを追加.
+        # クロスリファレンス用の ID.
         node_id = make_id(self.env, self.state.document, self.objtype, name)
+
+        # If 'name' part is modified, replace it with hash to make it unique.
+        if node_id != f'{self.objtype}-{name}':
+            hash_code = hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
+            node_id = f'{self.objtype}-{hash_code}'
+
+        # Add node_id to cross-reference targets.
         signode['ids'].append(node_id)
         self.state.document.note_explicit_target(signode)
 
