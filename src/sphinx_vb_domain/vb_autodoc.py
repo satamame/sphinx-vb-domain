@@ -1,20 +1,187 @@
 import os
 import re
+import xml.etree.ElementTree as ET
 from collections import namedtuple
+from io import StringIO
 from pathlib import Path
+from typing import Iterator
 
 from sphinx.application import Sphinx
 
 AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title'])
 
 
-def generate_module_content(src_file: Path, module_name: str):
-    '''Generate reST content per module
+def xml_to_dict(xml_string) -> dict[str, str]:
+    root = ET.fromstring(f'<root>{xml_string}</root>')
+    result = {}
+    for child in root:
+        if child.tag == 'remarks' and 'remarks' in result:
+            result['remarks'] += '\n' + child.text
+        else:
+            name = child.get('name', '')
+            if name:
+                result[f'{child.tag} {name}'] = child.text
+            else:
+                result[child.tag] = child.text
+    return result
+
+
+class DocComment:
+    def __init__(self, xml: str, sig: str):
+        self.xml = xml
+        self.sig = sig
+
+    def get_param_type(self, param_name: str):
+        '''Get paramter type from 'param As xx' part of signature.
+        '''
+        re_ptn = re.compile(param_name + r'\s+As\s+(\w+)')
+        match = re_ptn.search(self.sig)
+        if match.lastindex > 0:
+            return match.group(1)
+        else:
+            return ''
+
+    def get_return_type(self):
+        '''Get return type from 'As xx' at end of signature.
+        '''
+        re_ptn = re.compile(r'As\s+(\w+)\s*$')
+        match = re_ptn.search(self.sig)
+        if match.lastindex > 0:
+            return match.group(1)
+        else:
+            return ''
+
+    def to_function_directive(self, module_name: str) -> str:
+        content = f'.. vb:function:: {self.sig}\n'
+
+        if module_name:
+            content += f'   :module: {module_name}\n'
+
+        if not self.xml:
+            return content
+
+        content += '\n'
+        xml_data = xml_to_dict(self.xml)
+        indent = '   '
+
+        if 'summary' in xml_data:
+            summary_lines = xml_data['summary'].strip().split('\n')
+            for line in summary_lines:
+                content += f'{indent}{line}\n'
+            content += '\n'
+
+        for key in xml_data:
+            if key.split()[0] in ('param', 'parameter', 'arg', 'argument'):
+                param_name = key.split()[1]
+                content += f'{indent}:{key}: {xml_data[key]}\n'
+
+                param_type = self.get_param_type(param_name)
+                if param_type:
+                    content += f'{indent}:type {param_name}: {param_type}\n'
+                continue
+
+            if key in ('returns', 'return'):
+                content += f'{indent}:{key}: {xml_data[key]}\n'
+                return_type = self.get_return_type()
+                if return_type:
+                    content += f'{indent}:rtype: {return_type}\n'
+                continue
+
+            if key == 'rtype':
+                content += f'{indent}:{key}: {xml_data[key]}\n'
+                continue
+
+        content += '\n'
+
+        if 'remarks' in xml_data:
+            remark_lines = xml_data['remarks'].strip().split('\n')
+            for line in remark_lines:
+                content += f'{indent}{line}\n'
+            content += '\n'
+
+        return content
+
+    def to_module_desc(self) -> str:
+        content = ''
+        xml_data = xml_to_dict(self.xml)
+
+        if 'summary' in xml_data:
+            summary_lines = xml_data['summary'].strip().split('\n')
+            for line in summary_lines:
+                content += f'{line}\n'
+            content += '\n'
+
+        if 'remarks' in xml_data:
+            remark_lines = xml_data['remarks'].strip().split('\n')
+            for line in remark_lines:
+                content += f'{line}\n'
+            content += '\n'
+
+        return content
+
+    def to_rest(self, module_name: str) -> str:
+        if self.sig:
+            return self.to_function_directive(module_name)
+        else:
+            return self.to_module_desc()
+
+
+def extract_doccomments(f: StringIO) -> Iterator[DocComment]:
+    '''Generator of Document Comments from a text stream
     '''
+    # Regex pattern for function signature.
+    sig_ptn = re.compile(
+        r'((Public|Private|Friend|Protected)\s+)?(Function|Sub)\s+.+')
+
+    xml = ''
+    eof = False
+
+    while not eof:
+        line = f.readline()
+        if not line:
+            eof = True
+        line = line.strip()
+
+        # Extract document comment (maybe empty) and function signature.
+        if sig_ptn.match(line):
+            yield DocComment(xml, line)
+            xml = ''
+            continue
+
+        # Keep part of document comment in xml.
+        if line.startswith("'''"):
+            if xml:
+                xml += '\n'
+            xml += line[3:]
+            continue
+
+        # Neither function signature nor xml: yield document comment if kept.
+        if xml:
+            yield DocComment(xml, '')
+            xml = ''
+
+
+def generate_module_content(src_file: Path, module_name: str) -> str:
+    '''Generate reST content per module
+
+    Parameters
+    ----------
+    src_file : Path
+        Path to VB module source file.
+    module_name : str
+        Module name to show in document.
+
+    Returns
+    -------
+    module_content : str
+        Document content in reStructuredText for the module.
+    '''
+    # Module headline (level2)
     content = f"\n{module_name}\n{'-' * len(module_name)}\n\n"
 
-    # TODO: src_file から関数の情報を取得して content に vb:function
-    # ディレクティブを追加する。
+    with open(src_file, 'r', encoding='utf-8') as f:
+        for doccomment in extract_doccomments(f):
+            content += doccomment.to_rest(module_name)
 
     return content
 

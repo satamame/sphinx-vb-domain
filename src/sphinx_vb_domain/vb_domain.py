@@ -2,18 +2,18 @@ import hashlib
 import re
 
 from docutils import nodes
-from docutils.nodes import Element
+# from docutils.nodes import Element
 from docutils.parsers.rst import directives, Directive
 from sphinx import addnodes
-from sphinx.addnodes import pending_xref, desc_signature
+from sphinx.addnodes import desc_signature
 from sphinx.application import Sphinx
-from sphinx.builders import Builder
+# from sphinx.builders import Builder
 from sphinx.directives import ObjectDescription, ObjDescT
-from sphinx.domains import Domain
-from sphinx.environment import BuildEnvironment
+from sphinx.domains import Domain, ObjType
+# from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
-from sphinx.util.nodes import make_id
+from sphinx.util.nodes import make_refnode
 
 
 class VBXRefRole(XRefRole):
@@ -73,7 +73,10 @@ class VBFunction(ObjectDescription):
         access_and_name = match.group(1).strip()
         # Part 2: parameters (without ()).
         parameters = match.group(2).strip("()") if match.group(2) else ""
-        args = [arg.strip() for arg in parameters.split(',')]
+        if parameters:
+            args = [arg.strip() for arg in parameters.split(',')]
+        else:
+            args = []
         # Part 3: return type.
         return_type = match.group(3).removeprefix("As").strip() \
             if match.group(3) else ""
@@ -143,33 +146,36 @@ class VBFunction(ObjectDescription):
 
         Parameters
         ----------
-        name: ObjDescT
+        name : ObjDescT
             Object identifier (module_name.function_name).
-        sig: str
+        sig : str
             Function declaration from first arg of the directive.
-        signode: desc_signature
+        signode : desc_signature
             Node for signature structure.
         '''
-        objects = self.env.domaindata['vb']['objects']
+        # Replace target_name with hash if invalid chars are used.
+        target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')
+        match = target_ptn.fullmatch(name)
+        if match:
+            target_name = name
+        else:
+            target_name = hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
+        target_name = f'vb:{self.objtype}:{target_name}'
+
+        # TODO: 以下の3つの属性について、理屈を理解する。
+
         # Add tuple (document_name, object_type (Function), and signature).
-        objects[name] = (self.env.docname, self.objtype, sig)
+        objects = self.env.domaindata['vb']['objects']
+        objects[target_name] = (self.env.docname, target_name, sig)
 
-        # クロスリファレンス用の ID.
-        node_id = make_id(self.env, self.state.document, self.objtype, name)
-
-        # If 'name' part is modified, replace it with hash to make it unique.
-        if node_id != f'{self.objtype}-{name}':
-            hash_code = hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
-            node_id = f'{self.objtype}-{hash_code}'
-
-        # Add node_id to cross-reference targets.
-        signode['ids'].append(node_id)
+        # Add signode to cross-reference targets.
+        signode['ids'].append(target_name)
         self.state.document.note_explicit_target(signode)
 
         # インデックスエントリーを追加.
         indextext = f'{name} (VB function)'
         self.indexnode['entries'].append(
-            ('single', indextext, node_id, '', None)
+            ('single', indextext, target_name, '', None)
         )
 
     def transform_content(self, contentnode):
@@ -203,6 +209,9 @@ class VBDomain(Domain):
     name = 'vb'
     label = 'Visual Basic'
 
+    object_types = {
+        'function': ObjType('function', 'func', 'obj'),
+    }
     directives = {
         'function': VBFunction,
         'module': VBModule,
@@ -214,26 +223,38 @@ class VBDomain(Domain):
 
     # autodoc で使われる情報を保持する辞書の、初期値
     initial_data = {
-        "functions": {},  # function name -> (docname, synopsis)
-        "classes": {},    # class name -> (docname, synopsis)
-        "modules": {},    # module name -> (docname, synopsis)
+        # "functions": {},  # function name -> (docname, synopsis)
+        # "classes": {},    # class name -> (docname, synopsis)
+        # "modules": {},    # module name -> (docname, synopsis)
         "objects": {},    # object name -> (docname, objtype, signature)
     }
 
-    def get_objects(self) -> None:
-        return super().get_objects()
+    # def get_objects(self) -> None:
+    #     return super().get_objects()
 
-    def resolve_xref(
-            self, env: BuildEnvironment, fromdocname: str, builder: Builder,
-            typ: str, target: str, node: pending_xref, contnode: Element,
-            ) -> Element | None:
-        return super().resolve_xref(
-            env, fromdocname, builder, typ, target, node, contnode)
+    # def resolve_xref(
+    #         self, env: BuildEnvironment, fromdocname: str, builder: Builder,
+    #         typ: str, target: str, node: pending_xref, contnode: Element,
+    #         ) -> Element | None:
+    #     return super().resolve_xref(
+    #         env, fromdocname, builder, typ, target, node, contnode)
 
-    def process_doc(
-            self, env: BuildEnvironment, docname: str,
-            document: nodes.document) -> None:
-        super().process_doc(env, docname, document)
+    def resolve_any_xref(
+            self, env, fromdocname, builder, target, node, contnode):
+        # TODO: 理屈を理解する。
+        results = []
+        if target in self.data['objects']:
+            obj = self.data['objects'][target]
+            domain, objtype = target.split(':', 2)[:2]
+            results.append((f'{domain}:{objtype}', make_refnode(
+                builder, fromdocname, obj[0], obj[1], contnode, target
+            )))
+        return results
+
+    # def process_doc(
+    #         self, env: BuildEnvironment, docname: str,
+    #         document: nodes.document) -> None:
+    #     super().process_doc(env, docname, document)
 
 
 def setup(app: Sphinx):
