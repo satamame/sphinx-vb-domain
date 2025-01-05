@@ -16,7 +16,7 @@ reStructuredText
 
    ここに remarks を書く。
 
-.. vb:function:: Private Function id取得(ByVal name As String, ByVal age As Integer) As Integer
+.. vb:function:: Private Function getId(ByVal name As String, ByVal age As Integer) As Integer
    :module: 日本語のモジュール名
 
    かんたんなプライベート関数

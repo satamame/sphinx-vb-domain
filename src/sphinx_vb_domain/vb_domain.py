@@ -155,12 +155,17 @@ class VBFunction(ObjectDescription):
         '''
         # Replace target_name with hash if invalid chars are used.
         target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')
-        match = target_ptn.fullmatch(name)
-        if match:
-            target_name = name
-        else:
-            target_name = hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
-        target_name = f'vb:{self.objtype}:{target_name}'
+        name_parts = str(name).split('.')
+        target_parts = []
+        for name_part in name_parts:
+            match = target_ptn.fullmatch(name_part)
+            if match:
+                target_part = name_part
+            else:
+                target_part \
+                    = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
+            target_parts.append(target_part)
+        target_name = f'vb:{self.objtype}:{'.'.join(target_parts)}'
 
         # TODO: 以下の3つの属性について、理屈を理解する。
 
