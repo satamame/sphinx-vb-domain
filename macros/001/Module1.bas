@@ -2,6 +2,10 @@ Attribute VB_Name = "Module1"
 Option Explicit
 
 '''<summary>
+'''モジュールの説明
+'''</summary>
+
+'''<summary>
 '''かんたんなプロシージャ
 '''</summary>
 Sub sampleProcedure()
@@ -21,7 +25,8 @@ End Sub
 '''</summary>
 '''<param name="name">名前</param>
 '''<returns>名前を呼ぶ文字列</returns>
-Function sampleFunction(ByVal name As String)
+'''<remarks>注意事項</remarks>
+Function sampleFunction(ByVal name As String) As String
     Dim callName As String
     callName = name + "さん"
     Debug.Print "こんにちは、" + callName

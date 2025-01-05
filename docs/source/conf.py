@@ -15,7 +15,6 @@ author = 'satamame.com'
 
 extensions = [
     'myst_parser',
-    'sphinx.ext.autodoc',
     'sphinx_vb_domain',
 ]
 
