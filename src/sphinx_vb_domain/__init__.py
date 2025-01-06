@@ -3,7 +3,7 @@ from sphinx.application import Sphinx
 from .vb_autodoc import setup as setup_autodoc
 from .vb_domain import setup as setup_domain
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 def setup(app: Sphinx):

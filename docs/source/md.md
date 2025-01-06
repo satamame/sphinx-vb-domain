@@ -16,7 +16,7 @@
 ```
 
 ```{vb:function} Private Function id取得(ByVal name As String, ByVal age As Integer) As Integer
-:module: 日本語のモジュール名
+:module: Module1
 
 かんたんなプライベート関数
 
