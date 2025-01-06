@@ -8,10 +8,13 @@ from typing import Iterator
 
 from sphinx.application import Sphinx
 
+# For config 'vb_autodoc_paths'. See `setup()` below.
 AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title'])
 
 
 def xml_to_dict(xml_string) -> dict[str, str]:
+    '''Convert document comment (xml) to dict.
+    '''
     root = ET.fromstring(f'<root>{xml_string}</root>')
     result = {}
     for child in root:
@@ -27,6 +30,8 @@ def xml_to_dict(xml_string) -> dict[str, str]:
 
 
 class DocComment:
+    '''Object containing doc comment (xml) and/or func signature.
+    '''
     def __init__(self, xml: str, sig: str):
         self.xml = xml
         self.sig = sig
@@ -52,23 +57,26 @@ class DocComment:
             return ''
 
     def to_function_directive(self, module_name: str) -> str:
+        indent = '   '
         content = f'.. vb:function:: {self.sig}\n'
 
         if module_name:
-            content += f'   :module: {module_name}\n'
+            content += f'{indent}:module: {module_name}\n'
+
+        content += '\n'
 
         if not self.xml:
             return content
 
-        content += '\n'
         xml_data = xml_to_dict(self.xml)
-        indent = '   '
 
         if 'summary' in xml_data:
             summary_lines = xml_data['summary'].strip().split('\n')
             for line in summary_lines:
-                content += f'{indent}{line}\n'
+                content += f'{indent}{line.strip()}\n'
             content += '\n'
+
+        content_length = len(content)
 
         for key in xml_data:
             if key.split()[0] in ('param', 'parameter', 'arg', 'argument'):
@@ -91,7 +99,9 @@ class DocComment:
                 content += f'{indent}:{key}: {xml_data[key]}\n'
                 continue
 
-        content += '\n'
+        has_field_list = len(content) > content_length
+        if has_field_list:
+            content += '\n'
 
         if 'remarks' in xml_data:
             remark_lines = xml_data['remarks'].strip().split('\n')
@@ -152,7 +162,7 @@ def extract_doccomments(f: StringIO) -> Iterator[DocComment]:
         if line.startswith("'''"):
             if xml:
                 xml += '\n'
-            xml += line[3:]
+            xml += line[3:].strip()
             continue
 
         # Neither function signature nor xml: yield document comment if kept.
