@@ -36,7 +36,7 @@ class DocComment:
         '''
         re_ptn = re.compile(param_name + r'\s+As\s+(\w+)')
         match = re_ptn.search(self.sig)
-        if match.lastindex > 0:
+        if match and match.lastindex > 0:
             return match.group(1)
         else:
             return ''
@@ -46,7 +46,7 @@ class DocComment:
         '''
         re_ptn = re.compile(r'As\s+(\w+)\s*$')
         match = re_ptn.search(self.sig)
-        if match.lastindex > 0:
+        if match and match.lastindex > 0:
             return match.group(1)
         else:
             return ''
