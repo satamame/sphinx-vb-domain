@@ -165,13 +165,13 @@ class VBFunction(ObjectDescription):
                 target_part \
                     = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
             target_parts.append(target_part)
-        target_name = f'vb:{self.objtype}:{'.'.join(target_parts)}'
+        target_name = '.'.join(target_parts)
 
         # TODO: 以下の3つの属性について、理屈を理解する。
 
-        # Add tuple (document_name, object_type (Function), and signature).
+        # Add object.
         objects = self.env.domaindata['vb']['objects']
-        objects[target_name] = (self.env.docname, target_name, sig)
+        objects[target_name] = (self.env.docname, target_name, 'function', sig)
 
         # Add signode to cross-reference targets.
         signode['ids'].append(target_name)
@@ -246,13 +246,18 @@ class VBDomain(Domain):
 
     def resolve_any_xref(
             self, env, fromdocname, builder, target, node, contnode):
-        # TODO: 理屈を理解する。
         results = []
         if target in self.data['objects']:
             obj = self.data['objects'][target]
-            domain, objtype = target.split(':', 2)[:2]
-            results.append((f'{domain}:{objtype}', make_refnode(
-                builder, fromdocname, obj[0], obj[1], contnode, target
+            title = target + '()' if obj[2] == 'function' else target
+
+            if not contnode.astext():
+                child = nodes.literal(text=title)
+            else:
+                child = contnode
+
+            results.append(('', make_refnode(
+                builder, fromdocname, obj[0], obj[1], child, title
             )))
         return results
 

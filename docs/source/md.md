@@ -4,6 +4,7 @@
 :module: Module1
 
 かんたんなプライベート関数
+その説明
 
 :param name: 名前
 :type name: String
