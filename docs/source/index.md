@@ -4,6 +4,7 @@
 md
 rest
 modules
+genindex
 ```
 
 ## Cross-reference

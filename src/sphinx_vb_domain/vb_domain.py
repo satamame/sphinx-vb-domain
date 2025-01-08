@@ -2,7 +2,7 @@ import hashlib
 import re
 
 from docutils import nodes
-# from docutils.nodes import Element
+from docutils.nodes import Node
 from docutils.parsers.rst import directives, Directive
 from sphinx import addnodes
 from sphinx.addnodes import desc_signature
@@ -167,8 +167,6 @@ class VBFunction(ObjectDescription):
             target_parts.append(target_part)
         target_name = '.'.join(target_parts)
 
-        # TODO: 以下の3つの属性について、理屈を理解する。
-
         # Add object.
         objects = self.env.domaindata['vb']['objects']
         objects[target_name] = (self.env.docname, target_name, 'function', sig)
@@ -177,7 +175,7 @@ class VBFunction(ObjectDescription):
         signode['ids'].append(target_name)
         self.state.document.note_explicit_target(signode)
 
-        # インデックスエントリーを追加.
+        # インデックス (索引) エントリーを追加.
         indextext = f'{name} (VB function)'
         self.indexnode['entries'].append(
             ('single', indextext, target_name, '', None)
@@ -188,6 +186,27 @@ class VBFunction(ObjectDescription):
 
         transformer = DocFieldTransformer(self)
         transformer.transform_all(contentnode)
+
+    def run(self) -> list[Node]:
+        # 親クラスの run() メソッドを呼び出す
+        result = super().run()
+
+        # 関数名を取得
+        function_name = self.names[0].split('.')[-1] + '()'
+
+        # 見出しノードを作成
+        # TODO: 日本語対応
+        title_node = nodes.title(text=function_name)
+        section_node = nodes.section()
+        section_node['ids'].append(nodes.make_id(function_name))
+        section_node += title_node
+
+        # 必要に応じて関数の説明内容を追加
+        # content_node = nodes.paragraph(text="Function description goes here.")
+        # section_node += content_node
+
+        # 見出しノードを返す
+        return [section_node] + result
 
 
 class VBModule(Directive):
@@ -223,7 +242,7 @@ class VBDomain(Domain):
     }
     roles = {
         'vbtype': XRefRole(innernodeclass=nodes.emphasis),
-        'func': VBXRefRole(),
+        'vbfunc': VBXRefRole(),
     }
 
     # autodoc で使われる情報を保持する辞書の、初期値
