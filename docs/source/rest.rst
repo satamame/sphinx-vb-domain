@@ -3,7 +3,7 @@ reStructuredText
 =================
 
 .. vb:function:: Private Function getId(ByVal name As String, ByVal age As Integer) As Integer
-   :module: Module1
+   :module: reST
 
    かんたんなプライベート関数
 
@@ -29,3 +29,12 @@ reStructuredText
    :rtype: Integer
 
    ここに remarks を書く。
+
+Cross-references
+----------------
+
+.. :ref:`module1` NG
+
+:vb:function:`module1.sampleprocedure`
+
+:vb:function:`cd94f36.sampleprocedure`

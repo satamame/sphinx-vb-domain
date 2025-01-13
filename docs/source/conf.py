@@ -34,6 +34,7 @@ html_static_path = ['_static']
 myst_enable_extensions = [
     'fieldlist',
 ]
+myst_heading_anchors = 3
 
 # -- Options for sphinx_vb_domain --------------------------------------------
 

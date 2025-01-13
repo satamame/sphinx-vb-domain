@@ -2,15 +2,15 @@ import hashlib
 import re
 
 from docutils import nodes
-from docutils.nodes import Node
+from docutils.nodes import Node, Element
 from docutils.parsers.rst import directives, Directive
 from sphinx import addnodes
-from sphinx.addnodes import desc_signature
+from sphinx.addnodes import desc_signature, pending_xref
 from sphinx.application import Sphinx
-# from sphinx.builders import Builder
+from sphinx.builders import Builder
 from sphinx.directives import ObjectDescription, ObjDescT
 from sphinx.domains import Domain, ObjType
-# from sphinx.environment import BuildEnvironment
+from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
 from sphinx.util.nodes import make_refnode
@@ -61,7 +61,7 @@ class VBFunction(ObjectDescription):
 
         Returns
         -------
-        ObjDescT
+        obj_id : ObjDescT
             Object identifier.
         '''
         # Split signature into 3 parts.
@@ -134,52 +134,8 @@ class VBFunction(ObjectDescription):
 
         # Return Object identifier.
         module_name = self.options.get('module', '')
-        if module_name:
-            return f'{module_name}.{func_name}'
-        else:
-            return func_name
-
-    def add_target_and_index(
-            self, name: ObjDescT, sig: str, signode: desc_signature
-            ) -> None:
-        '''Add cross-reference id to signode, and index to index entries.
-
-        Parameters
-        ----------
-        name : ObjDescT
-            Object identifier (module_name.function_name).
-        sig : str
-            Function declaration from first arg of the directive.
-        signode : desc_signature
-            Node for signature structure.
-        '''
-        # Replace target_name with hash if invalid chars are used.
-        target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')
-        name_parts = str(name).split('.')
-        target_parts = []
-        for name_part in name_parts:
-            match = target_ptn.fullmatch(name_part)
-            if match:
-                target_part = name_part
-            else:
-                target_part \
-                    = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
-            target_parts.append(target_part)
-        target_name = '.'.join(target_parts)
-
-        # Add object.
-        objects = self.env.domaindata['vb']['objects']
-        objects[target_name] = (self.env.docname, target_name, 'function', sig)
-
-        # Add signode to cross-reference targets.
-        signode['ids'].append(target_name)
-        self.state.document.note_explicit_target(signode)
-
-        # インデックス (索引) エントリーを追加.
-        indextext = f'{name} (VB function)'
-        self.indexnode['entries'].append(
-            ('single', indextext, target_name, '', None)
-        )
+        obj_id = f'{module_name}.{func_name}' if module_name else func_name
+        return obj_id
 
     def transform_content(self, contentnode):
         super().transform_content(contentnode)
@@ -191,40 +147,65 @@ class VBFunction(ObjectDescription):
         # 親クラスの run() メソッドを呼び出す
         result = super().run()
 
-        # 関数名を取得
-        function_name = self.names[0].split('.')[-1] + '()'
+        # Replace target_id with hash if invalid chars are used.
+        target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')
+        name_parts = str(self.names[0]).split('.')
+        target_parts = []
+        for name_part in name_parts:
+            match = target_ptn.fullmatch(name_part)
+            if match:
+                target_part = name_part
+            else:
+                target_part \
+                    = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
+            target_parts.append(nodes.make_id(target_part))
+        target_id = '.'.join(target_parts)
 
-        # 見出しノードを作成
-        # TODO: 日本語対応
+        # 表示用の関数名を作成
+        function_name = str(self.names[0]).split('.')[-1] + '()'
+
+        # 見出しを含むセクションノードを作成
         title_node = nodes.title(text=function_name)
         section_node = nodes.section()
-        section_node['ids'].append(nodes.make_id(function_name))
+        section_node['ids'].append(target_id)
         section_node += title_node
+        section_node += result
 
-        # 必要に応じて関数の説明内容を追加
-        # content_node = nodes.paragraph(text="Function description goes here.")
-        # section_node += content_node
+        # Add target to enable using implicit text (function_name)
+        objects = self.env.domaindata['vb']['objects']
+        objects[target_id] = (
+            self.env.docname, target_id, 'function', function_name)
 
-        # 見出しノードを返す
-        return [section_node] + result
+        # TODO:
+        # これでローカルなターゲット id を作っているつもりだが上手く行かない。
+        # グローバルなターゲット id はこれをしなくてもできている。
+        # これの効果が不明。
+        # ローカルなターゲット id は MyST でないと作られないのかも知れない。
+        self.state.document.note_explicit_target(section_node)
+
+        return [section_node]
 
 
 class VBModule(Directive):
     '''For module directive (vb:module).
+
+    Notes
+    -----
+    Not in use, just declared.
     '''
     # Class variables are module directive's specs.
     has_content = True  # for module summary or details.
     required_arguments = 1  # 1 arg is enough as whole declaration.
     option_spec = {}
 
-    def run(self):
-        pass
+    # def run(self):
+    #     pass
 
-    def parse_arguments(self):
-        pass
+    # def parse_arguments(self):
+    #     pass
 
-    def parse_options(self):
-        pass
+    # def parse_options(self):
+    #     pass
 
 
 class VBDomain(Domain):
@@ -242,7 +223,7 @@ class VBDomain(Domain):
     }
     roles = {
         'vbtype': XRefRole(innernodeclass=nodes.emphasis),
-        'vbfunc': VBXRefRole(),
+        'function': VBXRefRole(),
     }
 
     # autodoc で使われる情報を保持する辞書の、初期値
@@ -253,37 +234,45 @@ class VBDomain(Domain):
         "objects": {},    # object name -> (docname, objtype, signature)
     }
 
-    # def get_objects(self) -> None:
-    #     return super().get_objects()
+    def resolve_xref(
+            self, env: BuildEnvironment, fromdocname: str, builder: Builder,
+            typ: str, target: str, node: pending_xref, contnode: Element,
+            ) -> Element | None:
+        if target not in self.data['objects']:
+            return None
 
-    # def resolve_xref(
-    #         self, env: BuildEnvironment, fromdocname: str, builder: Builder,
-    #         typ: str, target: str, node: pending_xref, contnode: Element,
-    #         ) -> Element | None:
-    #     return super().resolve_xref(
-    #         env, fromdocname, builder, typ, target, node, contnode)
+        obj = self.data['objects'][target]
+        if obj[2] != typ:  # obj[2] は登録時に指定したオブジェクトタイプ
+            return None
+
+        if obj[2] == 'function':
+            title = obj[3]
+            child = nodes.literal(text=title)
+        else:
+            title = target
+            child = contnode
+
+        result = make_refnode(
+            builder, fromdocname, obj[0], obj[1], child, title)
+        return result
 
     def resolve_any_xref(
             self, env, fromdocname, builder, target, node, contnode):
         results = []
-        if target in self.data['objects']:
-            obj = self.data['objects'][target]
-            title = target + '()' if obj[2] == 'function' else target
 
-            if not contnode.astext():
-                child = nodes.literal(text=title)
-            else:
-                child = contnode
+        if target not in self.data['objects']:
+            return results
 
-            results.append(('', make_refnode(
-                builder, fromdocname, obj[0], obj[1], child, title
-            )))
+        obj = self.data['objects'][target]
+        title = obj[3] if obj[2] == 'function' else target
+        if not contnode.astext():
+            child = nodes.literal(text=title)
+        else:
+            child = contnode
+
+        results.append(('', make_refnode(
+            builder, fromdocname, obj[0], obj[1], child, title)))
         return results
-
-    # def process_doc(
-    #         self, env: BuildEnvironment, docname: str,
-    #         document: nodes.document) -> None:
-    #     super().process_doc(env, docname, document)
 
 
 def setup(app: Sphinx):
