@@ -33,8 +33,9 @@ reStructuredText
 Cross-references
 ----------------
 
-.. :ref:`module1` NG
+* :any:`module1.sampleprocedure`
+* これは :any:`関数へのリンク <module1.sampleprocedure>` です。
+* :vb:function:`cd94f36.sampleprocedure`
+* :vb:function:`関数へのリンク <cd94f36.sampleprocedure>`
 
-:vb:function:`module1.sampleprocedure`
-
-:vb:function:`cd94f36.sampleprocedure`
+.. * :vb:function:`module1.sampleprocedure`

@@ -5,7 +5,7 @@ from docutils import nodes
 from docutils.nodes import Node, Element
 from docutils.parsers.rst import directives, Directive
 from sphinx import addnodes
-from sphinx.addnodes import desc_signature, pending_xref
+from sphinx.addnodes import desc_signature, pending_xref, desc_content
 from sphinx.application import Sphinx
 from sphinx.builders import Builder
 from sphinx.directives import ObjectDescription, ObjDescT
@@ -137,11 +137,31 @@ class VBFunction(ObjectDescription):
         obj_id = f'{module_name}.{func_name}' if module_name else func_name
         return obj_id
 
-    def transform_content(self, contentnode):
+    def transform_content(self, contentnode: desc_content):
         super().transform_content(contentnode)
 
+        # Transform field lists.
         transformer = DocFieldTransformer(self)
         transformer.transform_all(contentnode)
+
+        # Change line-breaks in top-level paragraphs into <br> nodes.
+        for node in contentnode:
+            if not isinstance(node, nodes.paragraph):
+                continue
+
+            line_broken = []
+            for child in node.children:
+                if isinstance(child, nodes.Text):
+                    lines = child.astext().split('\n')
+                    for i, line in enumerate(lines):
+                        line_broken.append(nodes.Text(line))
+                        if i < len(lines) - 1:
+                            line_broken.append(
+                                nodes.raw('', '<br />', format='html'))
+                else:
+                    line_broken.append(child)
+
+            node.children = line_broken
 
     def run(self) -> list[Node]:
         # 親クラスの run() メソッドを呼び出す
@@ -245,12 +265,11 @@ class VBDomain(Domain):
         if obj[2] != typ:  # obj[2] は登録時に指定したオブジェクトタイプ
             return None
 
-        if obj[2] == 'function':
-            title = obj[3]
-            child = nodes.literal(text=title)
-        else:
-            title = target
+        title = obj[3] if obj[2] == 'function' else target
+        if 'refexplicit' in node.attributes and node.attributes['refexplicit']:
             child = contnode
+        else:
+            child = nodes.literal(text=title)
 
         result = make_refnode(
             builder, fromdocname, obj[0], obj[1], child, title)
@@ -265,10 +284,10 @@ class VBDomain(Domain):
 
         obj = self.data['objects'][target]
         title = obj[3] if obj[2] == 'function' else target
-        if not contnode.astext():
-            child = nodes.literal(text=title)
-        else:
+        if 'refexplicit' in node.attributes and node.attributes['refexplicit']:
             child = contnode
+        else:
+            child = nodes.literal(text=title)
 
         results.append(('', make_refnode(
             builder, fromdocname, obj[0], obj[1], child, title)))
