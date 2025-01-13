@@ -4,6 +4,8 @@
 
 Sphinx extension to handle Visual Basic function directive, and also create the directives from document comments in VB source code.
 
+This project is really experimental. Only features below are working but without any assurance.
+
 ## Installation
 
 ### pip
@@ -73,7 +75,31 @@ vb_autodoc_paths = [
 
 Then, run sphinx-build with `-D vb_autodoc=1` parameter.
 
-In modules.rst, Module (level-2 headline) is created per vb files in src dir, and function directives under the Modules.
+In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb files in 'vb-src-dir', and function directives under the Modules.
+
+### Cross-references
+
+When function directives are rendered, they come with a headline so that the directives appear in toctree.  
+Also, the headline will be a cross-reference target.
+
+#### reStructuredText
+
+```restructuredtext
+* :vb:function:`module_name.function_name`
+* :any:`module_name.function_name`
+* :any:`Link text <module_name.function_name>`
+```
+
+#### MyST
+
+```markdown
+- {vb:function}`module_name.function_name`
+- <project:#module_name.function_name>
+- [Link text](#module_name.function_name)
+```
+
+> [!NOTE]
+> `module_name` and `function_name` are encoded if they contain characters invalid as target name.
 
 ## Known issues
 

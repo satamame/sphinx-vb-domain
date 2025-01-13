@@ -1,9 +1,10 @@
 # Markdown
 
 ```{vb:function} Private Function getId(ByVal name As String, ByVal age As Integer) As Integer
-:module: Module1
+:module: MD
 
 かんたんなプライベート関数
+その説明
 
 :param name: 名前
 :type name: String
@@ -16,7 +17,7 @@
 ```
 
 ```{vb:function} Private Function id取得(ByVal name As String, ByVal age As Integer) As Integer
-:module: Module1
+:module: MD
 
 かんたんなプライベート関数
 

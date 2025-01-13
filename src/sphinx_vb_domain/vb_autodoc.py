@@ -187,7 +187,8 @@ def generate_module_content(src_file: Path, module_name: str) -> str:
         Document content in reStructuredText for the module.
     '''
     # Module headline (level2)
-    content = f"\n{module_name}\n{'-' * len(module_name)}\n\n"
+    byte_length = len(module_name.encode('utf-8'))
+    content = f"\n{module_name}\n{'-' * byte_length}\n\n"
 
     with open(src_file, 'r', encoding='utf-8') as f:
         for doccomment in extract_doccomments(f):
