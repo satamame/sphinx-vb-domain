@@ -75,7 +75,7 @@ vb_autodoc_paths = [
 
 Then, run sphinx-build with `-D vb_autodoc=1` parameter.
 
-In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb files in 'vb-src-dir', and function directives under the Modules.
+In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb file in `vb-src-dir`, and function directives under the Modules.
 
 ### Cross-references
 
