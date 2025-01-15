@@ -5,6 +5,7 @@ from collections import namedtuple
 from io import StringIO
 from pathlib import Path
 from typing import Iterator
+from unicodedata import east_asian_width
 
 from sphinx.application import Sphinx
 
@@ -171,6 +172,13 @@ def extract_doccomments(f: StringIO) -> Iterator[DocComment]:
             xml = ''
 
 
+def headline_len(title: str) -> int:
+    def char_width(char: str) -> int:
+        return 2 if east_asian_width(char) in ('F', 'W') else 1
+
+    return sum(char_width(char) for char in title)
+
+
 def generate_module_content(src_file: Path, module_name: str) -> str:
     '''Generate reST content per module
 
@@ -187,8 +195,7 @@ def generate_module_content(src_file: Path, module_name: str) -> str:
         Document content in reStructuredText for the module.
     '''
     # Module headline (level2)
-    byte_length = len(module_name.encode('utf-8'))
-    content = f"\n{module_name}\n{'-' * byte_length}\n\n"
+    content = f"\n{module_name}\n{'-' * headline_len(module_name)}\n\n"
 
     with open(src_file, 'r', encoding='utf-8') as f:
         for doccomment in extract_doccomments(f):
@@ -208,7 +215,7 @@ def generate_rst_files(app: Sphinx):
     for path_info in app.config.vb_autodoc_paths:
         autodoc_path = AutodocPath(*path_info)
         title = autodoc_path.title
-        rst_content = f"{title}\n{'=' * len(title)}\n\n"
+        rst_content = f"{title}\n{'=' * headline_len(title)}\n\n"
 
         src_dir = Path(app.confdir) / autodoc_path.src
         for vb_file in os.listdir(src_dir):
