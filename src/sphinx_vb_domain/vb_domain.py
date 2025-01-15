@@ -120,8 +120,6 @@ class VBFunction(ObjectDescription):
         # Add param list to signode.
         paramlist = addnodes.desc_parameterlist()
         for arg in args:
-            if ' As ' not in arg:
-                raise ValueError(f'No type for arg "{arg}" in "{sig}".')
             # Add param (e.g. 'ByVal arg1 As Integer').
             param = addnodes.desc_parameter('', arg)
             paramlist += param
@@ -166,6 +164,10 @@ class VBFunction(ObjectDescription):
     def run(self) -> list[Node]:
         # 親クラスの run() メソッドを呼び出す
         result = super().run()
+
+        # signature parsing failed
+        if not self.names:
+            return result
 
         # Replace target_id with hash if invalid chars are used.
         target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')

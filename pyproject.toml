@@ -1,6 +1,6 @@
 [project]
 name = "sphinx-vb-domain"
-version = "0.3.0"
+version = "0.3.1"
 description = "Sphinx extension to handle Visual Basic Domain."
 authors = [
     { name = "satamame", email = "satamame@gmail.com" }

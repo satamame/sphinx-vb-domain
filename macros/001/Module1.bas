@@ -41,3 +41,21 @@ Function sampleFunction(ByVal name As String) As String
     Debug.Print "こんにちは、" + callName
     sampleFunction = callName
 End Function
+
+''' <summary>
+''' 修正確認用
+''' </summary>
+''' <param name="name">名前</param>
+''' <remarks>注意事項</remarks>
+Sub testFix(ByVal name)
+    Debug.Print "こんにちは。"
+End Sub
+
+''' <summary>
+''' 修正確認用2
+''' </summary>
+''' <param name="name">名前</param>
+''' <remarks>注意事項</remarks>
+Sub testFix2(name)
+    Debug.Print "こんにちは。"
+End Sub
