@@ -1,5 +1,7 @@
 # sphinx-vb-domain
 
+[≫日本語版](https://github.com/satamame/sphinx-vb-domain/blob/main/README_ja.md)
+
 ## Overview
 
 Sphinx extension to handle Visual Basic function directive, and also create the directives from document comments in VB source code.
