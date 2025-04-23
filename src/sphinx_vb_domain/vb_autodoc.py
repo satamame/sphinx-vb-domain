@@ -10,7 +10,7 @@ from unicodedata import east_asian_width
 from sphinx.application import Sphinx
 
 # For config 'vb_autodoc_paths'. See `setup()` below.
-AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title'])
+AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title', 'content_cb'])
 
 
 def xml_to_dict(xml_string) -> dict[str, str]:
@@ -213,6 +213,11 @@ def generate_rst_files(app: Sphinx):
         return
 
     for path_info in app.config.vb_autodoc_paths:
+        if len(path_info) < 3:
+            raise ValueError('vb_autodoc_paths must have at least 3 elements.')
+        if len(path_info) < 4:
+            path_info = (*path_info, None)
+
         autodoc_path = AutodocPath(*path_info)
         title = autodoc_path.title
         rst_content = f"{title}\n{'=' * headline_len(title)}\n\n"
@@ -236,12 +241,13 @@ def setup(app: Sphinx):
     # > sphinx-build html docs/source docs/build -D vb_autodoc=1
     app.add_config_value('vb_autodoc', False, 'env', bool)
 
-    # Config parameter to set source dirs, rst names, and titles.
-    # e.g. [('../../macros', 'modules', 'Modules')]
+    # Config parameter to set source dirs, rst names, titles, and callback.
+    # e.g. [('../../macros', 'modules', 'Modules', content_cb)]
     #    makes 'modules.rst' from '../../macros/*.bas' files.
     # '../../macros' should be relative from Sphinx conf dir.
     # 'modules' is treated as 'modules.rst' relative from Sphinx src dir.
     # 'Modules' will be the title of 'modules.rst' page.
+    # content_cb is a callback function to add content, or None if not needed.
     app.add_config_value('vb_autodoc_paths', [], 'env', list[AutodocPath])
 
     # Add process just after the builder is inited.
