@@ -38,6 +38,12 @@ myst_heading_anchors = 3
 
 # -- Options for sphinx_vb_domain --------------------------------------------
 
+module_notes = {
+    '__page__': 'ページノート',
+    'Module1': 'モジュールノート',
+    'Module1.procedureWithoutDocComment': '関数ノート',
+}
+
 vb_autodoc_paths = [
-    ('../../macros/001', 'modules', 'モジュール'),
+    ('../../macros/001', 'modules', 'モジュール', module_notes),
 ]
