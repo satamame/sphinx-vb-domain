@@ -62,7 +62,7 @@ VB のドキュメントコメントからドキュメントを作成するに�
 # conf.py
 
 vb_autodoc_paths = [
-    ('vb-src-dir', 'page-path', 'page-title'),
+    ('vb-src-dir', 'page-path', 'page-title', notes),
 ]
 ```
 
@@ -72,6 +72,20 @@ vb_autodoc_paths = [
     - 生成する reST ファイルの、source ディレクトリからの相対パス。'modules' と書くと 'modules.rst' が生成される。
 - `page-title`
     - reST ファイルに追加されるタイトル (レベル1の見出し)。
+- notes
+    - 補足説明を追加したい場合に指定する辞書。以下のターゲット (キー) に対応する。
+        - `'__page__'`: ページタイトルの下に追加される補足説明。
+        - `<モジュール名>`: モジュールのタイトルの下に追加される補足説明。
+        - `<モジュール名>.<関数名>`: 関数ディレクティブの下に追加される補足説明。
+    ```python
+    # 例
+    # ※値は reST で書けるが、見出しは追加できない。
+    notes = {
+        '__page__': 'これはページの補足説明です。',
+        'Module1': 'これは Module1 の補足説明です。',
+        'Module1.MyFunction': 'これは MyFunction の補足説明です。',
+    }
+    ```
 
 設定を書いたら `-D vb_autodoc=1` という引数をつけて sphinx-build を実行します。
 
