@@ -189,6 +189,14 @@ def headline_len(title: str) -> int:
     return sum(char_width(char) for char in title)
 
 
+def sanitize_note(note: str) -> str:
+    '''Remove or demote headings in the note content.'''
+    # Replace reST heading patterns with plain text
+    sanitized_note = re.sub(
+        r'^(.*)\n[-=~^`]+\n', r'**\1**\n', note, flags=re.MULTILINE)
+    return sanitized_note
+
+
 def generate_module_content(
         src_file: Path, module_name: str, notes: dict) -> str:
     '''Generate reST content per module
@@ -213,14 +221,14 @@ def generate_module_content(
     # Add note to module block using notes.
     module_note = notes.get(module_name)
     if module_note:
-        content += f"{module_note}\n\n"
+        content += f"{sanitize_note(module_note)}\n\n"
 
     with open(src_file, 'r', encoding='utf-8') as f:
         for doccomment in extract_doccomments(f):
             content += doccomment.to_rest(module_name)
             func_note = notes.get(f'{module_name}.{doccomment.func_name}')
             if func_note:
-                content += f"{func_note}\n\n"
+                content += f"{sanitize_note(func_note)}\n\n"
 
     return content
 
@@ -246,7 +254,7 @@ def generate_rst_files(app: Sphinx):
         # Add note to rst_content using notes.
         page_note = autodoc_path.notes.get('__page__')
         if page_note:
-            rst_content += f"{page_note}\n\n"
+            rst_content += f"{sanitize_note(page_note)}\n\n"
 
         src_dir = Path(app.confdir) / autodoc_path.src
         for vb_file in os.listdir(src_dir):
