@@ -68,17 +68,17 @@ vb_autodoc_paths = [
 ]
 ```
 
-- `vb-src-dir`
+- `'vb-src-dir'`
     - Path to directory contains VB source, relative from conf.py (e.g. '../../macros').
-- `page-path`
+- `'page-path'`
     - Path to reST file tobe created, relative from Sphinx source directory (e.g. 'modules' will create 'modules.rst').
-- `page-title`
+- `'page-title'`
     - Title (level-1 headline) added to e.g. modules.rst.
-- notes
+- `notes`
     - Optional dict to add notes to below targets (dict keys).
         - `'__page__'`: Note to be added under page title.
-        - `<Module name>`: Note to be added under the module's title.
-        - `<Module name>.<Function name>`: Note to be added under the function's directive.
+        - `'<Module name>'`: Note to be added under the module's title.
+        - `'<Module name>.<Function name>'`: Note to be added under the function's directive.
     ```python
     # Example
     # Note: Values can be reST, but you should not use headlines.
