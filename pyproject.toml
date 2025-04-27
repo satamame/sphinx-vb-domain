@@ -1,13 +1,13 @@
 [project]
 name = "sphinx-vb-domain"
-version = "0.3.2"
+version = "0.4.1"
 description = "Sphinx extension to handle Visual Basic Domain."
 authors = [
     { name = "satamame", email = "satamame@gmail.com" }
 ]
 license = { text = "MIT" }
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Framework :: Sphinx",
     "Framework :: Sphinx :: Extension",
     "License :: OSI Approved :: MIT License",

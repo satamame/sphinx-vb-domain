@@ -3,6 +3,8 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+from textwrap import dedent
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
@@ -38,6 +40,18 @@ myst_heading_anchors = 3
 
 # -- Options for sphinx_vb_domain --------------------------------------------
 
+module_notes = {
+    '__page__': '補足\n----\n\nページの補足説明',
+    'Module1': '補足\n~~~~\n\nモジュールの補足説明',
+    'Module1.procedureWithoutDocComment': dedent('''
+        補足
+        ^^^^
+
+        - 関数の補足説明1
+        - 関数の補足説明2
+    '''),
+}
+
 vb_autodoc_paths = [
-    ('../../macros/001', 'modules', 'モジュール'),
+    ('../../macros/001', 'modules', 'モジュール', module_notes),
 ]
