@@ -114,7 +114,7 @@ class VBFunction(ObjectDescription):
         # Add function type to signode (e.g. 'Function ').
         signode += addnodes.desc_annotation(func_type + ' ', func_type + ' ')
 
-        # Add function name to signode (e.g. 'MuFunc').
+        # Add function name to signode (e.g. 'MyFunc').
         signode += addnodes.desc_name(func_name, func_name)
 
         # Add param list to signode.
@@ -187,10 +187,17 @@ class VBFunction(ObjectDescription):
         function_name = str(self.names[0]).split('.')[-1] + '()'
 
         # 見出しを含むセクションノードを作成
-        title_node = nodes.title(text=function_name)
         section_node = nodes.section()
-        section_node['ids'].append(target_id)
-        section_node += title_node
+        if self.env.config.vb_add_function_labels:
+            # Add label to section node.
+            if self.env.config.vb_add_docname_to_labels:
+                label = f'{self.env.docname}:{target_id}'
+            else:
+                label = target_id
+            section_node['names'].append(label)  # クロスリファレンス用
+            section_node['ids'].append(label)    # HTML アンカー用
+            section_node['label'] = label        # カスタム用途
+        section_node += nodes.title(text=function_name)
         section_node += result
 
         # Add target to enable using implicit text (function_name)
@@ -300,3 +307,11 @@ def setup(app: Sphinx):
     '''Set up vb_domain feature.
     '''
     app.add_domain(VBDomain)
+
+    # Config parameter to add function labels as reference targets.
+    # This should be False if user enables sphinx.ext.autosectionlabel.
+    app.add_config_value('vb_add_function_labels', True, 'env', bool)
+    # Config parameter to add docname to function labels.
+    # This should be True if there are multiple modules with same function
+    # names.
+    app.add_config_value('vb_add_docname_to_labels', False, 'env', bool)
