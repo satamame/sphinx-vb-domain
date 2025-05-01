@@ -54,6 +54,28 @@ extensions = [
    ここに注意事項などを書きます。
 ```
 
+### コンフィグ
+
+conf.py の中で以下の設定が使えます。
+
+#### vb_add_function_labels
+
+```python
+vb_add_function_labels = False  # Default: True
+```
+
+関数ディレクティブにリンクターゲットとなるラベルをつけないようにします。  
+`sphinx.ext.autosectionlabel` を使っているなら `False` にしても良いでしょう。  
+ただし、sphinx-vb-domain のラベルは `{モジュール名}.{関数名}` という形になるため、複数のモジュールに同じ名前の関数があっても区別できます。
+
+#### vb_add_docname_to_labels
+
+```python
+vb_add_docname_to_labels = True  # Default: False
+```
+
+関数ディレクティブにつくラベルを `{ファイル名}:{モジュール名}.{関数名}` という形にして、複数ファイルに同じ名前のモジュールと関数があっても区別できるようにします。
+
 ### Autodoc
 
 VB のドキュメントコメントからドキュメントを作成するには、以下の設定が必要です。
@@ -94,7 +116,7 @@ vb_autodoc_paths = [
 ### クロスリファレンス
 
 関数ディレクティブには見出しが付くので、toctree に含まれるようになります。  
-また、クロスリファレンスのターゲットとして使えます。
+また、`vb_add_function_labels` が `True` (デフォルト) の場合は、クロスリファレンスのターゲットとして使えます。
 
 #### reStructuredText
 

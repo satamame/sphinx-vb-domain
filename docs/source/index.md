@@ -9,7 +9,7 @@ genindex
 
 ## Cross-reference
 
-- {vb:function}`module1.sampleprocedure`
+- {ref}`modules:module1.sampleprocedure`
 - {vb:function}`cd94f36.sampleprocedure`
 
 % {vb:function}`e52559a.getid`

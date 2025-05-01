@@ -282,7 +282,8 @@ def setup(app: Sphinx):
     # '../../macros' should be relative from Sphinx conf dir.
     # 'modules' is treated as 'modules.rst' relative from Sphinx src dir.
     # 'Modules' will be the title of 'modules.rst' page.
-    # notes is a callback function to add note, or None if not needed.
+    # notes is a dict to map notes to targets where to add.
+    # e.g. {'__page__': 'page note', 'Module Name': 'module note'}
     app.add_config_value('vb_autodoc_paths', [], 'env', list[AutodocPath])
 
     # Add process just after the builder is inited.

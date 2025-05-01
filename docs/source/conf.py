@@ -17,6 +17,7 @@ author = 'satamame.com'
 
 extensions = [
     'myst_parser',
+    # 'sphinx.ext.autosectionlabel',
     'sphinx_vb_domain',
 ]
 
@@ -24,6 +25,8 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 language = 'ja'
+
+# autosectionlabel_prefix_document = True
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -55,3 +58,6 @@ module_notes = {
 vb_autodoc_paths = [
     ('../../macros/001', 'modules', 'モジュール', module_notes),
 ]
+
+# vb_add_function_labels = False
+vb_add_docname_to_labels = True

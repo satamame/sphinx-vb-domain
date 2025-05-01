@@ -56,6 +56,28 @@ For example.
    Remarks here.
 ```
 
+### Configuration
+
+The following settings can be used in `conf.py`.
+
+#### vb_add_function_labels
+
+```python
+vb_add_function_labels = False  # Default: True
+```
+
+Disables adding link target labels to function directives.  
+If you are using `sphinx.ext.autosectionlabel`, you may set this to `False`.  
+However, labels in `sphinx-vb-domain` take the form `{module_name}.{function_name}`, so even if multiple modules have functions with the same name, they can still be distinguished.
+
+#### vb_add_docname_to_labels
+
+```python
+vb_add_docname_to_labels = True  # Default: False
+```
+
+Adds labels to function directives in the form `{filename}:{module_name}.{function_name}`, allowing functions with the same name in the same module across multiple files to be distinguished.
+
 ### Autodoc
 
 To creade document from VB document comments, following config is needed.
@@ -96,7 +118,7 @@ In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is create
 ### Cross-references
 
 When function directives are rendered, they come with a headline so that the directives appear in toctree.  
-Also, the headline will be a cross-reference target.
+Also, when `vb_add_function_labels` is set to `True` (Default), the headline will be a cross-reference target.
 
 #### reStructuredText
 
