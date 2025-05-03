@@ -80,7 +80,7 @@ Adds labels to function directives in the form `{filename}:{module_name}.{functi
 
 ### Autodoc
 
-To creade document from VB document comments, following config is needed.
+To create document from VB document comments, following config is needed.
 
 ```python
 # conf.py
