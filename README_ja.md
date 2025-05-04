@@ -64,9 +64,18 @@ conf.py の中で以下の設定が使えます。
 vb_add_function_labels = False  # Default: True
 ```
 
-関数ディレクティブにリンクターゲットとなるラベルをつけないようにします。  
+`False` にすると、関数ディレクティブにターゲットラベルをつけなくなります。  
 `sphinx.ext.autosectionlabel` を使っているなら `False` にしても良いでしょう。  
-ただし、sphinx-vb-domain のラベルは `{モジュール名}.{関数名}` という形になるため、複数のモジュールに同じ名前の関数があっても区別できます。
+ただし、sphinx-vb-domain のターゲットラベルは `{モジュール名}.{関数名}` という形になるため、複数のモジュールに同じ名前の関数がある場合はこちらを使う方が良いです。
+
+#### vb_encode_invalid_labels
+
+```python
+vb_encode_invalid_labels = False  # Default: True
+```
+
+`False` にすると、関数名が Sphinx のターゲットラベルとして無効な文字列を含む場合のハッシュエンコードをしなくなります。  
+この設定は Autodoc でモジュール見出しにつける明示的なラベルに対しても作用します。
 
 #### vb_add_docname_to_labels
 
@@ -74,7 +83,26 @@ vb_add_function_labels = False  # Default: True
 vb_add_docname_to_labels = True  # Default: False
 ```
 
-関数ディレクティブにつくラベルを `{ファイル名}:{モジュール名}.{関数名}` という形にして、複数ファイルに同じ名前のモジュールと関数があっても区別できるようにします。
+`True` にすると、関数ディレクティブにつくターゲットラベルを `{ファイル名}-{モジュール名}.{関数名}` という形にして、複数ファイルに同じ名前のモジュールと関数があっても区別できるようにします。  
+この設定は Autodoc でモジュール見出しにつける明示的なラベルに対しても作用します。
+
+#### vb_docname_label_delimiter
+
+```python
+vb_docname_label_delimiter = '__'  # Default: '-'
+```
+
+`vb_add_docname_to_labels` でファイル名の後ろに付く区切り文字を設定します。  
+Sphinx のターゲットラベルとして有効な文字を指定する必要があります。  
+Autodoc でモジュール見出しにつける明示的なラベルに対しても作用します。
+
+#### vb_autodoc_module_labels
+
+```python
+vb_autodoc_module_labels = True  # Default: False
+```
+
+`True` にすると、Autodoc で生成するモジュール見出しに明示的なラベルをつけるようになります。
 
 ### Autodoc
 
@@ -133,9 +161,6 @@ vb_autodoc_paths = [
 - <project:#module_name.function_name>
 - [Link text](#module_name.function_name)
 ```
-
-> [!NOTE]
-> `module_name` や `function_name` がターゲット名として使えない文字を含む場合、適当なターゲット名に変換 (エンコード) されます。
 
 ## 既知の問題
 

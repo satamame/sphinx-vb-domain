@@ -60,4 +60,5 @@ vb_autodoc_paths = [
 ]
 
 # vb_add_function_labels = False
+vb_autodoc_module_labels = True
 vb_add_docname_to_labels = True

@@ -1,4 +1,3 @@
-import hashlib
 import re
 
 from docutils import nodes
@@ -14,6 +13,8 @@ from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
 from sphinx.util.nodes import make_refnode
+
+from .utils import to_safe_label
 
 
 class VBXRefRole(XRefRole):
@@ -169,19 +170,9 @@ class VBFunction(ObjectDescription):
         if not self.names:
             return result
 
-        # Replace target_id with hash if invalid chars are used.
-        target_ptn = re.compile(r'[a-zA-Z0-9_\.]+')
-        name_parts = str(self.names[0]).split('.')
-        target_parts = []
-        for name_part in name_parts:
-            match = target_ptn.fullmatch(name_part)
-            if match:
-                target_part = name_part
-            else:
-                target_part \
-                    = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
-            target_parts.append(nodes.make_id(target_part))
-        target_id = '.'.join(target_parts)
+        # Generate a target id for the function.
+        encode_ = self.env.config.vb_encode_invalid_labels
+        target_id = to_safe_label(self.names[0], encode_)
 
         # 表示用の関数名を作成
         function_name = str(self.names[0]).split('.')[-1] + '()'
@@ -191,7 +182,8 @@ class VBFunction(ObjectDescription):
         if self.env.config.vb_add_function_labels:
             # Add label to section node.
             if self.env.config.vb_add_docname_to_labels:
-                label = f'{self.env.docname}:{target_id}'
+                delimiter = self.env.config.vb_docname_label_delimiter
+                label = self.env.docname + delimiter + target_id
             else:
                 label = target_id
             section_node['names'].append(label)  # クロスリファレンス用
@@ -267,6 +259,14 @@ class VBDomain(Domain):
             self, env: BuildEnvironment, fromdocname: str, builder: Builder,
             typ: str, target: str, node: pending_xref, contnode: Element,
             ) -> Element | None:
+
+        # Handle docname-target_id format
+        if self.env.config.vb_add_docname_to_labels:
+            delimiter = self.env.config.vb_docname_label_delimiter
+            if delimiter in target:
+                _, target_id = target.split(delimiter, 1)
+                target = target_id
+
         if target not in self.data['objects']:
             return None
 
@@ -311,7 +311,14 @@ def setup(app: Sphinx):
     # Config parameter to add function labels as reference targets.
     # This should be False if user enables sphinx.ext.autosectionlabel.
     app.add_config_value('vb_add_function_labels', True, 'env', bool)
+
+    # Config parameter to encode labels that contain invalid characters.
+    app.add_config_value('vb_encode_invalid_labels', True, 'env', bool)
+
     # Config parameter to add docname to function labels.
     # This should be True if there are multiple modules with same function
     # names.
     app.add_config_value('vb_add_docname_to_labels', False, 'env', bool)
+
+    # Config parameter to set delimiter between module name and function name.
+    app.add_config_value('vb_docname_label_delimiter', '-', 'env', str)

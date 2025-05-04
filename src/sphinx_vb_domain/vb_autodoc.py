@@ -9,6 +9,8 @@ from unicodedata import east_asian_width
 
 from sphinx.application import Sphinx
 
+from .utils import to_safe_label
+
 # For config 'vb_autodoc_paths'. See `setup()` below.
 AutodocPath = namedtuple('AutodocPath', ['src', 'rst', 'title', 'notes'])
 
@@ -198,7 +200,8 @@ def sanitize_note(note: str) -> str:
 
 
 def generate_module_content(
-        src_file: Path, module_name: str, notes: dict) -> str:
+        src_file: Path, module_name: str, autodoc_path: AutodocPath,
+        app: Sphinx) -> str:
     '''Generate reST content per module
 
     Parameters
@@ -207,8 +210,10 @@ def generate_module_content(
         Path to VB module source file.
     module_name : str
         Module name to show in document.
-    notes : dict
-        Dict to map notes to targets where to add.
+    autodoc_path : AutodocPath
+        AutodocPath object to be handled.
+    app : Sphinx
+        Sphinx application object.
 
     Returns
     -------
@@ -218,15 +223,30 @@ def generate_module_content(
     # Module headline (level2)
     content = f"\n{module_name}\n{'-' * headline_len(module_name)}\n\n"
 
+    # Add label to module section if enabled.
+    if app.config.vb_autodoc_module_labels:
+
+        # Generate a target id for the function.
+        encode_ = app.config.vb_encode_invalid_labels
+        target_id = to_safe_label(module_name, encode_)
+
+        if app.config.vb_add_docname_to_labels:
+            delimiter = app.config.vb_docname_label_delimiter
+            label = autodoc_path.rst + delimiter + target_id
+        else:
+            label = target_id
+        content = f".. _{label}:\n\n" + content
+
     # Add note to module block using notes.
-    module_note = notes.get(module_name)
+    module_note = autodoc_path.notes.get(module_name)
     if module_note:
         content += f"{sanitize_note(module_note)}\n\n"
 
     with open(src_file, 'r', encoding='utf-8') as f:
         for doccomment in extract_doccomments(f):
             content += doccomment.to_rest(module_name)
-            func_note = notes.get(f'{module_name}.{doccomment.func_name}')
+            func_note = autodoc_path.notes.get(
+                f'{module_name}.{doccomment.func_name}')
             if func_note:
                 content += f"{sanitize_note(func_note)}\n\n"
 
@@ -262,7 +282,7 @@ def generate_rst_files(app: Sphinx):
                 module_name = os.path.splitext(os.path.basename(vb_file))[0]
                 src_file = src_dir / vb_file
                 rst_content += generate_module_content(
-                    src_file, module_name, autodoc_path.notes)
+                    src_file, module_name, autodoc_path, app)
 
         dest_file = Path(app.srcdir) / (autodoc_path.rst + '.rst')
         with open(dest_file, 'w', encoding='utf-8') as f:
@@ -285,6 +305,9 @@ def setup(app: Sphinx):
     # notes is a dict to map notes to targets where to add.
     # e.g. {'__page__': 'page note', 'Module Name': 'module note'}
     app.add_config_value('vb_autodoc_paths', [], 'env', list[AutodocPath])
+
+    # Config parameter to add module labels as reference targets.
+    app.add_config_value('vb_autodoc_module_labels', False, 'env', bool)
 
     # Add process just after the builder is inited.
     app.connect('builder-inited', generate_rst_files)
