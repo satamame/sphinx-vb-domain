@@ -66,9 +66,18 @@ The following settings can be used in `conf.py`.
 vb_add_function_labels = False  # Default: True
 ```
 
-Disables adding link target labels to function directives.  
+Setting to `False` disables adding target labels to function directives.  
 If you are using `sphinx.ext.autosectionlabel`, you may set this to `False`.  
-However, labels in `sphinx-vb-domain` take the form `{module_name}.{function_name}`, so even if multiple modules have functions with the same name, they can still be distinguished.
+However, labels in `sphinx-vb-domain` take the form `{module_name}.{function_name}`, so if multiple modules have functions with the same name, you may take this feature.
+
+#### vb_encode_invalid_labels
+
+```python
+vb_encode_invalid_labels = False  # Default: True
+```
+
+If set to `False`, function names containing invalid characters for Sphinx target labels will not be hash-encoded.  
+This setting also applies to explicit labels added to module headings in Autodoc.
 
 #### vb_add_docname_to_labels
 
@@ -76,7 +85,26 @@ However, labels in `sphinx-vb-domain` take the form `{module_name}.{function_nam
 vb_add_docname_to_labels = True  # Default: False
 ```
 
-Adds labels to function directives in the form `{filename}:{module_name}.{function_name}`, allowing functions with the same name in the same module across multiple files to be distinguished.
+Setting to `True` adds labels to function directives in the form `{filename}-{module_name}.{function_name}`, allowing functions with the same name in the same module across multiple files to be distinguished.  
+This setting also applies to explicit labels added to module headings in Autodoc.
+
+#### vb_docname_label_delimiter
+
+```python
+vb_docname_label_delimiter = '__'  # Default: '-'
+```
+
+`vb_add_docname_to_labels` sets the delimiter that appears after the filename.  
+You must specify characters that are valid for Sphinx target labels.  
+This setting also applies to explicit labels added to module headings in Autodoc.
+
+#### vb_autodoc_module_labels
+
+```python
+vb_autodoc_module_labels = True  # Default: False
+```
+
+Setting to `True` adds explicit labels to module headings in Autodoc.
 
 ### Autodoc
 
@@ -135,9 +163,6 @@ Also, when `vb_add_function_labels` is set to `True` (Default), the headline wil
 - <project:#module_name.function_name>
 - [Link text](#module_name.function_name)
 ```
-
-> [!NOTE]
-> `module_name` and `function_name` are encoded if they contain characters invalid as target name.
 
 ## Known issues
 
