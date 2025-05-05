@@ -17,7 +17,7 @@ author = 'satamame.com'
 
 extensions = [
     'myst_parser',
-    # 'sphinx.ext.autosectionlabel',
+    # 'sphinx.ext.autosectionlabel',  # 自動でセクションラベルを付与する
     'sphinx_vb_domain',
 ]
 
@@ -26,7 +26,7 @@ exclude_patterns = []
 
 language = 'ja'
 
-# autosectionlabel_prefix_document = True
+# autosectionlabel_prefix_document = True  # セクションラベルにファイル名を付ける
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -59,6 +59,8 @@ vb_autodoc_paths = [
     ('../../macros/001', 'modules', 'モジュール', module_notes),
 ]
 
-# vb_add_function_labels = False
-vb_autodoc_module_labels = True
-vb_add_docname_to_labels = True
+# vb_add_function_labels = False  # 関数のラベルを生成しない
+# vb_encode_invalid_labels = False  # 無効なラベルをエンコードしない
+# vb_add_docname_to_labels = True  # ラベルにファイル名を付ける
+# vb_docname_label_delimiter = '__'  # ラベルのファイル名の区切り文字
+# vb_autodoc_module_labels = True  # Autodoc でモジュールのラベルを生成する

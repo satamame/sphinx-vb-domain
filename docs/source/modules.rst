@@ -5,8 +5,6 @@
 
 ページの補足説明
 
-.. _modules-module1:
-
 
 Module1
 -------
@@ -73,8 +71,6 @@ Module1
    :param name: 名前
 
    注意事項
-
-.. _modules-cd94f36:
 
 
 モジュール1

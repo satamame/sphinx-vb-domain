@@ -183,12 +183,10 @@ class VBFunction(ObjectDescription):
             # Add label to section node.
             if self.env.config.vb_add_docname_to_labels:
                 delimiter = self.env.config.vb_docname_label_delimiter
-                label = self.env.docname + delimiter + target_id
-            else:
-                label = target_id
-            section_node['names'].append(label)  # クロスリファレンス用
-            section_node['ids'].append(label)    # HTML アンカー用
-            section_node['label'] = label        # カスタム用途
+                target_id = self.env.docname + delimiter + target_id
+            section_node['names'].append(target_id)  # クロスリファレンス用
+            section_node['ids'].append(target_id)    # HTML アンカー用
+            section_node['label'] = target_id        # カスタム用途
         section_node += nodes.title(text=function_name)
         section_node += result
 
@@ -259,13 +257,6 @@ class VBDomain(Domain):
             self, env: BuildEnvironment, fromdocname: str, builder: Builder,
             typ: str, target: str, node: pending_xref, contnode: Element,
             ) -> Element | None:
-
-        # Handle docname-target_id format
-        if self.env.config.vb_add_docname_to_labels:
-            delimiter = self.env.config.vb_docname_label_delimiter
-            if delimiter in target:
-                _, target_id = target.split(delimiter, 1)
-                target = target_id
 
         if target not in self.data['objects']:
             return None
