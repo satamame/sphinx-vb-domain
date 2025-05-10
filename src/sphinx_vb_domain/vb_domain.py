@@ -276,21 +276,17 @@ class VBDomain(Domain):
         return result
 
     def resolve_any_xref(
-            self, env, fromdocname, builder, target, node, contnode):
+            self, env: BuildEnvironment, fromdocname: str, builder: Builder,
+            target: str, node: pending_xref, contnode: Element
+            ) -> list[tuple[str, Element]]:
         results = []
 
-        if target not in self.data['objects']:
-            return results
+        # 再利用: resolve_xref() の結果を取得
+        result = self.resolve_xref(
+            env, fromdocname, builder, '', target, node, contnode)
+        if result:
+            results.append(('vb:function', result))  # ドメインとロールを指定
 
-        obj = self.data['objects'][target]
-        title = obj[3] if obj[2] == 'function' else target
-        if 'refexplicit' in node.attributes and node.attributes['refexplicit']:
-            child = contnode
-        else:
-            child = nodes.literal(text=title)
-
-        results.append(('', make_refnode(
-            builder, fromdocname, obj[0], obj[1], child, title)))
         return results
 
 
