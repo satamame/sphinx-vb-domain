@@ -18,12 +18,10 @@ Module1
 .. vb:function:: Sub procedureWithoutDocComment()
    :module: Module1
 
-
 **補足**
 
 - 関数の補足説明1
 - 関数の補足説明2
-
 
 .. vb:function:: Sub sampleProcedure()
    :module: Module1
@@ -109,4 +107,9 @@ Module1
    注意事項2
    
    注意事項3
+
+**ver.1.0.0 から ver. 2.0.0 までの間に変更された点**
+
+- 引数が変わった。
+- 処理順が変わった。
 

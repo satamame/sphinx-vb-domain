@@ -43,6 +43,9 @@ dev-dependencies = [
 [tool.ruff]
 lint.ignore = ["Q000"]
 
+[tool.ruff.format]
+quote-style = "single"
+
 [tool.hatch.metadata]
 allow-direct-references = true
 metadata-version = "2.3"

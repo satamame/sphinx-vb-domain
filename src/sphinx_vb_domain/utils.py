@@ -3,7 +3,6 @@ import re
 from pathlib import Path
 
 from docutils.nodes import make_id
-from jinja2 import Environment, FileSystemLoader
 
 
 def to_safe_label(name: str, encode_: bool) -> str:
@@ -25,9 +24,9 @@ def to_safe_label(name: str, encode_: bool) -> str:
             target_part = name_part
         else:
             # ハッシュダイジェストを生成
-            digest = hashlib.md5(name_part.encode("utf-8")).hexdigest()[:8]
+            digest = hashlib.md5(name_part.encode('utf-8')).hexdigest()[:8]
             # 先頭が数字の場合に接頭辞を付ける
-            target_part = f"x{digest}" if digest[0].isdigit() else digest
+            target_part = f'x{digest}' if digest[0].isdigit() else digest
 
         target_parts.append(make_id(target_part))
 
@@ -65,16 +64,35 @@ def notes_from_template(
     if not template_path.is_file():
         raise FileNotFoundError(f"Template file not found: {template_path}")
 
-    # Load the template file using Jinja2
-    env = Environment(loader=FileSystemLoader(templates_path))
-    template = env.get_template(template_file)
+    # Read the raw content of the template
+    with open(template_path, 'r', encoding='utf-8') as f:
+        rst_content = f.read()
 
-    # Extract blocks from the template
-    blocks = {}
-    for block_name, block_content in template.blocks.items():
-        key = block_name
-        if encode_keys:
-            key = to_safe_label(key, encode_=True)
-        blocks[key] = ''.join(block_content)
+    # Parse the content manually (e.g., split by headings)
+    notes = {}
+    current_key = None
+    current_value = []
+    previous_line = ""
 
-    return blocks
+    for line in rst_content.splitlines():
+        # Detect headings (e.g., lines followed by "----" or "~~~~")
+        if line.strip() and all(c in "-=~^" for c in line.strip()):
+            # Save the current key-value pair
+            if current_key and current_value:
+                notes[current_key] = "\n".join(current_value[:-1]).strip()
+                current_value = []
+
+            # Update the current key (use the previous line as the key)
+            current_key = previous_line.strip()
+        else:
+            # Collect content for the current key
+            if current_key:
+                current_value.append(line)
+
+        previous_line = line
+
+    # Save the last key-value pair
+    if current_key and current_value:
+        notes[current_key] = "\n".join(current_value).strip()
+
+    return notes
