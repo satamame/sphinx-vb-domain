@@ -6,7 +6,17 @@
             "type": "debugpy",
             "request": "launch",
             "program": ".venv/Scripts/sphinx-build.exe",
-            "args": ["-b", "html", "docs/source", "docs/build", "-T", "-a", "-E"],
+            "args": [
+                "-b",
+                "html",
+                "docs/source",
+                "docs/build",
+                "-T",
+                "-a",
+                "-E",
+                "-D",
+                "vb_autodoc=1"
+            ],
             "console": "integratedTerminal",
             "justMyCode": false
          }

@@ -1,4 +1,4 @@
-from sphinx_vb_domain.vb_domain import VBDomain
+# from sphinx_vb_domain.vb_domain import VBDomain
 
 
 # def test_handle_signature():

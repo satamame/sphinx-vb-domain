@@ -302,8 +302,9 @@ def setup(app: Sphinx):
     # '../../macros' should be relative from Sphinx conf dir.
     # 'modules' is treated as 'modules.rst' relative from Sphinx src dir.
     # 'Modules' will be the title of 'modules.rst' page.
-    # notes is a dict to map notes to targets where to add.
+    # `notes` is a dict to map notes to targets where to add.
     # e.g. {'__page__': 'page note', 'Module Name': 'module note'}
+    # Or, user can also use defaultdict as `notes` to give dynamic notes.
     app.add_config_value('vb_autodoc_paths', [], 'env', list[AutodocPath])
 
     # Config parameter to add module labels as reference targets.

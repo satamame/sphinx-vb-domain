@@ -36,9 +36,15 @@ managed = true
 dev-dependencies = [
     "sphinx-rtd-theme>=3.0.2",
     "myst-parser>=4.0.0",
-    "ruff>=0.8.3",
     "pytest>=8.3.4",
+    "isort>=6.0.1",
 ]
+
+[tool.ruff]
+lint.ignore = ["Q000"]
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.hatch.metadata]
 allow-direct-references = true
