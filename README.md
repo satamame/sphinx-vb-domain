@@ -143,6 +143,40 @@ Then, run sphinx-build with `-D vb_autodoc=1` parameter.
 
 In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb file in `vb-src-dir`, and function directives under the Modules.
 
+#### Notes from template
+
+You can create a template in reST and convert it to dict as notes.
+
+```restructuredtext
+__page__
+========
+
+This is note for the page.
+
+Module1
+-------
+
+This is note for Module1.
+
+Module1.MyFunction
+~~~~~~~~~~~~~~~~~~
+
+This is note for MyFunction.
+```
+
+Put it in _templates folder, then call `notes_from_template()` function.
+
+```python
+# conf.py
+from sphinx_vb_domain.utils import notes_from_template
+
+notes = notes_from_template('notes.rst')
+
+vb_autodoc_paths = [
+    ('vb-src-dir', 'page-path', 'page-title', notes),
+]
+```
+
 ### Cross-references
 
 When function directives are rendered, they come with a headline so that the directives appear in toctree.  
