@@ -141,6 +141,40 @@ vb_autodoc_paths = [
 
 `page-path` で指定した reST ファイル (e.g. 'modules.rst') に、`vb-src-dir` ディレクトリ内の VB ファイルごとに「モジュール」(レベル2の見出し) が作られ、その下に関数ディレクティブが作られます。
 
+#### Notes from template
+
+reSTでテンプレートを作成し、それをノートとしてdictに変換することができます。
+
+```restructuredtext
+__page__
+========
+
+This is note for the page.
+
+Module1
+-------
+
+This is note for Module1.
+
+Module1.MyFunction
+~~~~~~~~~~~~~~~~~~
+
+This is note for MyFunction.
+```
+
+このようなテンプレートを _templates フォルダーに置き、`notes_from_template()` 関数を呼び出します。
+
+```python
+# conf.py
+from sphinx_vb_domain.utils import notes_from_template
+
+notes = notes_from_template('notes.rst')
+
+vb_autodoc_paths = [
+    ('vb-src-dir', 'page-path', 'page-title', notes),
+]
+```
+
 ### クロスリファレンス
 
 関数ディレクティブには見出しが付くので、toctree に含まれるようになります。  
