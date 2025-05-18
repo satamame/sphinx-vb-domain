@@ -83,7 +83,8 @@ vb_encode_invalid_labels = False  # Default: True
 vb_add_docname_to_labels = True  # Default: False
 ```
 
-`True` にすると、関数ディレクティブにつくターゲットラベルを `{ファイル名}-{モジュール名}.{関数名}` という形にして、複数ファイルに同じ名前のモジュールと関数があっても区別できるようにします。  
+`True` にすると、関数ディレクティブにつくターゲットラベルを `{ファイルパス}-{モジュール名}.{関数名}` という形にして、複数ファイルに同じ名前のモジュールと関数があっても区別できるようにします。  
+`{ファイルパス}` 部分のディレクトリの区切りは `'-'` になります。  
 この設定は Autodoc でモジュール見出しにつける明示的なラベルに対しても作用します。
 
 #### vb_docname_label_delimiter
@@ -92,7 +93,7 @@ vb_add_docname_to_labels = True  # Default: False
 vb_docname_label_delimiter = '__'  # Default: '-'
 ```
 
-`vb_add_docname_to_labels` でファイル名の後ろに付く区切り文字を設定します。  
+`vb_add_docname_to_labels` でディレクトリやファイル名の後ろに付く区切り文字を設定します。  
 Sphinx のターゲットラベルとして有効な文字を指定する必要があります。  
 Autodoc でモジュール見出しにつける明示的なラベルに対しても作用します。
 
