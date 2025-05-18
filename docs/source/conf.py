@@ -60,7 +60,7 @@ module_notes = {
 notes_for_modules = notes_from_template('notes_for_modules.rst')
 
 vb_autodoc_paths = [
-    ('../../macros/001', 'modules', 'モジュール', notes_for_modules),
+    ('../../macros/001', 'modules/index', 'モジュール', notes_for_modules),
 ]
 
 # vb_add_function_labels = False  # 関数のラベルを生成しない

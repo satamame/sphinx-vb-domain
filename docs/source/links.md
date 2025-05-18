@@ -16,28 +16,28 @@
 ## ラベルにファイル名を付ける
 
 - Module1
-    - {ref}`modules-module1.sampleprocedure`
-    - {vb:function}`modules-module1.sampleprocedure`
-    - <project:#modules-module1.sampleprocedure>
-    - [sampleProcedure()](modules-module1.sampleprocedure)
+    - {ref}`modules-index-module1.sampleprocedure`
+    - {vb:function}`modules-index-module1.sampleprocedure`
+    - <project:#modules-index-module1.sampleprocedure>
+    - [sampleProcedure()](modules-index-module1.sampleprocedure)
 - モジュール1
-    - {ref}`modules-x4cd94f36.x95ec2a54`
-    - {vb:function}`modules-x4cd94f36.x95ec2a54`
-    - <project:#modules-x4cd94f36.x95ec2a54>
-    - [名前呼び()](modules-x4cd94f36.x95ec2a54)
+    - {ref}`modules-index-x4cd94f36.x95ec2a54`
+    - {vb:function}`modules-index-x4cd94f36.x95ec2a54`
+    - <project:#modules-index-x4cd94f36.x95ec2a54>
+    - [名前呼び()](modules-index-x4cd94f36.x95ec2a54)
 
 ## ラベルのファイル名の区切り文字
 
 - Module1
-    - {ref}`modules__module1.sampleprocedure`
-    - {vb:function}`modules__module1.sampleprocedure`
-    - <project:#modules__module1.sampleprocedure>
-    - [sampleProcedure()](modules__module1.sampleprocedure)
+    - {ref}`modules__index__module1.sampleprocedure`
+    - {vb:function}`modules__index__module1.sampleprocedure`
+    - <project:#modules__index__module1.sampleprocedure>
+    - [sampleProcedure()](modules__index__module1.sampleprocedure)
 - モジュール1
-    - {ref}`modules__x4cd94f36.x95ec2a54`
-    - {vb:function}`modules__x4cd94f36.x95ec2a54`
-    - <project:#modules__x4cd94f36.x95ec2a54>
-    - [名前呼び()](modules__x4cd94f36.x95ec2a54)
+    - {ref}`modules__index__x4cd94f36.x95ec2a54`
+    - {vb:function}`modules__index__x4cd94f36.x95ec2a54`
+    - <project:#modules__index__x4cd94f36.x95ec2a54>
+    - [名前呼び()](modules__index__x4cd94f36.x95ec2a54)
 
 ## Autodoc でモジュールのラベルを生成する
 
@@ -55,12 +55,12 @@
 ### ラベルにファイル名を付ける
 
 - Module1
-    - {ref}`modules-module1`
-    - {vb:function}`modules-module1`
-    - <project:#modules-module1>
-    - [Module1](modules-module1)
+    - {ref}`modules-index-module1`
+    - {vb:function}`modules-index-module1`
+    - <project:#modules-index-module1>
+    - [Module1](modules-index-module1)
 - モジュール1
-    - {ref}`modules-x4cd94f36`
-    - {vb:function}`modules-x4cd94f36`
-    - <project:#modules-x4cd94f36>
-    - [モジュール1](modules-x4cd94f36)
+    - {ref}`modules-index-x4cd94f36`
+    - {vb:function}`modules-index-x4cd94f36`
+    - <project:#modules-index-x4cd94f36>
+    - [モジュール1](modules-index-x4cd94f36)
