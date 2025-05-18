@@ -232,7 +232,8 @@ def generate_module_content(
 
         if app.config.vb_add_docname_to_labels:
             delimiter = app.config.vb_docname_label_delimiter
-            label = autodoc_path.rst + delimiter + target_id
+            docname = autodoc_path.rst.replace('/', delimiter)
+            label = docname + delimiter + target_id
         else:
             label = target_id
         content = f".. _{label}:\n\n" + content
@@ -285,6 +286,9 @@ def generate_rst_files(app: Sphinx):
                     src_file, module_name, autodoc_path, app)
 
         dest_file = Path(app.srcdir) / (autodoc_path.rst + '.rst')
+        # Create the directory if it does not exist.
+        if not dest_file.parent.exists():
+            dest_file.parent.mkdir(parents=True)
         with open(dest_file, 'w', encoding='utf-8') as f:
             f.write(rst_content)
 
