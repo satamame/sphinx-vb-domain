@@ -1,17 +1,17 @@
 import re
 
 from docutils import nodes
-from docutils.nodes import Node, Element
-from docutils.parsers.rst import directives, Directive
+from docutils.nodes import Element, Node
+from docutils.parsers.rst import Directive, directives
 from sphinx import addnodes
-from sphinx.addnodes import desc_signature, pending_xref, desc_content
+from sphinx.addnodes import desc_content, desc_signature, pending_xref
 from sphinx.application import Sphinx
 from sphinx.builders import Builder
-from sphinx.directives import ObjectDescription, ObjDescT
+from sphinx.directives import ObjDescT, ObjectDescription
 from sphinx.domains import Domain, ObjType
 from sphinx.environment import BuildEnvironment
 from sphinx.roles import XRefRole
-from sphinx.util.docfields import Field, TypedField, DocFieldTransformer
+from sphinx.util.docfields import DocFieldTransformer, Field, TypedField
 from sphinx.util.nodes import make_refnode
 
 from .utils import to_safe_label
@@ -183,7 +183,8 @@ class VBFunction(ObjectDescription):
             # Add label to section node.
             if self.env.config.vb_add_docname_to_labels:
                 delimiter = self.env.config.vb_docname_label_delimiter
-                target_id = self.env.docname + delimiter + target_id
+                docname = self.env.docname.replace('/', delimiter)
+                target_id = docname + delimiter + target_id
             section_node['names'].append(target_id)  # クロスリファレンス用
             section_node['ids'].append(target_id)    # HTML アンカー用
             section_node['label'] = target_id        # カスタム用途

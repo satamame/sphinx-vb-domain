@@ -85,7 +85,8 @@ This setting also applies to explicit labels added to module headings in Autodoc
 vb_add_docname_to_labels = True  # Default: False
 ```
 
-Setting to `True` adds labels to function directives in the form `{filename}-{module_name}.{function_name}`, allowing functions with the same name in the same module across multiple files to be distinguished.  
+Setting to `True` adds labels to function directives in the form `{filepath}-{module_name}.{function_name}`, allowing functions with the same name in the same module across multiple files to be distinguished.  
+Directory delimiters in `{filepath}` part become `'-'`.  
 This setting also applies to explicit labels added to module headings in Autodoc.
 
 #### vb_docname_label_delimiter
@@ -94,7 +95,7 @@ This setting also applies to explicit labels added to module headings in Autodoc
 vb_docname_label_delimiter = '__'  # Default: '-'
 ```
 
-`vb_add_docname_to_labels` sets the delimiter that appears after the filename.  
+`vb_add_docname_to_labels` sets the delimiter that appears after the directory/file names.  
 You must specify characters that are valid for Sphinx target labels.  
 This setting also applies to explicit labels added to module headings in Autodoc.
 
