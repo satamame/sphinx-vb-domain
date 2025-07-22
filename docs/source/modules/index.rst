@@ -33,8 +33,8 @@ Module1
 
    かんたんなプライベートプロシージャ
 
-   :param num: 数字
-   :type num: Integer
+   :param Num: 数字
+   :type Num: Integer
 
 .. vb:function:: Function sampleFunction(ByVal name As String) As String
    :module: Module1

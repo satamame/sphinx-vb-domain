@@ -19,7 +19,7 @@ End Sub
 '''<summary>
 '''かんたんなプライベートプロシージャ
 '''</summary>
-'''<param name="num">数字</param>
+'''<param name="Num">数字</param>
 Private Sub samplePrivateProcedure(ByVal num As Integer)
     Debug.Print num
 End Sub
