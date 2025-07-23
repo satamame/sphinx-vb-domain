@@ -115,15 +115,15 @@ To create document from VB document comments, following config is needed.
 # conf.py
 
 vb_autodoc_paths = [
-    ('vb-src-dir', 'page-path', 'page-title', notes),
+    (vb_src_dir, page_path, page_title, notes),
 ]
 ```
 
-- `'vb-src-dir'`
+- `vb_src_dir`
     - Path to directory contains VB source, relative from conf.py (e.g. '../../macros').
-- `'page-path'`
+- `page_path`
     - Path to reST file tobe created, relative from Sphinx source directory (e.g. 'modules' will create 'modules.rst').
-- `'page-title'`
+- `page_title`
     - Title (level-1 headline) added to e.g. modules.rst.
 - `notes`
     - Optional dict to add notes to below targets (dict keys).
@@ -142,7 +142,7 @@ vb_autodoc_paths = [
 
 Then, run sphinx-build with `-D vb_autodoc=1` parameter.
 
-In file at `page-path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb file in `vb-src-dir`, and function directives under the Modules.
+In file at `page_path` (e.g. 'modules.rst'), Module (level-2 headline) is created per vb file in `vb_src_dir`, and function directives under the Modules.
 
 #### Notes from template
 
@@ -174,7 +174,7 @@ from sphinx_vb_domain.utils import notes_from_template
 notes = notes_from_template('notes.rst')
 
 vb_autodoc_paths = [
-    ('vb-src-dir', 'page-path', 'page-title', notes),
+    (vb_src_dir, page_path, page_title, notes),
 ]
 ```
 

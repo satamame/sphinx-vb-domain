@@ -46,7 +46,7 @@ class DocComment:
     def get_param_type(self, param_name: str):
         '''Get paramter type from 'param As xx' part of signature.
         '''
-        re_ptn = re.compile(param_name + r'\s+As\s+(\w+)')
+        re_ptn = re.compile(param_name + r'\s+As\s+(\w+)', re.IGNORECASE)
         match = re_ptn.search(self.sig)
         if match and match.lastindex > 0:
             return match.group(1)
@@ -56,7 +56,7 @@ class DocComment:
     def get_return_type(self):
         '''Get return type from 'As xx' at end of signature.
         '''
-        re_ptn = re.compile(r'As\s+(\w+)\s*$')
+        re_ptn = re.compile(r'As\s+(\w+)\s*$', re.IGNORECASE)
         match = re_ptn.search(self.sig)
         if match and match.lastindex > 0:
             return match.group(1)

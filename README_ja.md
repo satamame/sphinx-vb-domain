@@ -113,15 +113,15 @@ VB のドキュメントコメントからドキュメントを作成するに�
 # conf.py
 
 vb_autodoc_paths = [
-    ('vb-src-dir', 'page-path', 'page-title', notes),
+    (vb_src_dir, page_path, page_title, notes),
 ]
 ```
 
-- `'vb-src-dir'`
+- `vb_src_dir`
     - VBソースを含むディレクトリへの、conf.py からの相対パス (e.g. '../../macros')。
-- `'page-path'`
+- `page_path`
     - 生成する reST ファイルの、source ディレクトリからの相対パス。'modules' と書くと 'modules.rst' が生成される。
-- `'page-title'`
+- `page_title`
     - reST ファイルに追加されるタイトル (レベル1の見出し)。
 - `notes`
     - 補足説明を追加したい場合に指定する辞書。以下のターゲット (キー) に対応する。
@@ -140,7 +140,7 @@ vb_autodoc_paths = [
 
 設定を書いたら `-D vb_autodoc=1` という引数をつけて sphinx-build を実行します。
 
-`page-path` で指定した reST ファイル (e.g. 'modules.rst') に、`vb-src-dir` ディレクトリ内の VB ファイルごとに「モジュール」(レベル2の見出し) が作られ、その下に関数ディレクティブが作られます。
+`page_path` で指定した reST ファイル (e.g. 'modules.rst') に、`vb_src_dir` ディレクトリ内の VB ファイルごとに「モジュール」(レベル2の見出し) が作られ、その下に関数ディレクティブが作られます。
 
 #### Notes from template
 
@@ -172,7 +172,7 @@ from sphinx_vb_domain.utils import notes_from_template
 notes = notes_from_template('notes.rst')
 
 vb_autodoc_paths = [
-    ('vb-src-dir', 'page-path', 'page-title', notes),
+    (vb_src_dir, page_path, page_title, notes),
 ]
 ```
 

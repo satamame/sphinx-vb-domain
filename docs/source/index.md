@@ -3,7 +3,7 @@
 ```{toctree}
 md
 rest
-modules
+modules/index
 links
 genindex
 ```
