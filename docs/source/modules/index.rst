@@ -1,27 +1,29 @@
 モジュール
 ==========
 
-**補足**
+**Note**
 
-ページの補足説明
+ページの Note
 
 
 Module1
 -------
 
-**補足**
+**Note**
 
-モジュールの補足説明
+モジュールの Note
 
-モジュールの説明
+.. line-block::
+
+   モジュールの説明
 
 .. vb:function:: Sub procedureWithoutDocComment()
    :module: Module1
 
-**補足**
+**Note**
 
-- 関数の補足説明1
-- 関数の補足説明2
+- 関数の Note 1行目
+- 関数の Note 2行目
 
 .. vb:function:: Sub sampleProcedure()
    :module: Module1
@@ -74,7 +76,15 @@ Module1
 モジュール1
 -----------
 
-モジュールの説明
+.. line-block::
+
+   モジュールの説明 (1行目)
+   モジュールの説明 (2行目)
+
+.. line-block::
+
+   モジュールの注釈 (1行目)
+   モジュールの注釈 (2行目)
 
 .. vb:function:: Sub procedureWithoutDocComment()
    :module: モジュール1
