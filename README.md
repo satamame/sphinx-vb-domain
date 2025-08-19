@@ -187,16 +187,18 @@ Also, when `vb_add_function_labels` is set to `True` (Default), the headline wil
 
 ```restructuredtext
 * :vb:function:`module_name.function_name`
-* :any:`module_name.function_name`
-* :any:`Link text <module_name.function_name>`
+* :vb:function:`Link text <module_name.function_name>`
+* :any:`module_name`
+* :any:`Link text <module_name>`
 ```
 
 #### MyST
 
 ```markdown
 - {vb:function}`module_name.function_name`
-- <project:#module_name.function_name>
-- [Link text](#module_name.function_name)
+- {vb:function}`Link text <module_name.function_name>`
+- {ref}`module_name`
+- {ref}`Link text <module_name>`
 ```
 
 ## Known issues

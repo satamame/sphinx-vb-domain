@@ -2,8 +2,13 @@ Attribute VB_Name = "モジュール1"
 Option Explicit
 
 '''<summary>
-'''モジュールの説明
+'''モジュールの説明 (1行目)
+'''モジュールの説明 (2行目)
 '''</summary>
+'''<remarks>
+'''モジュールの注釈 (1行目)
+'''モジュールの注釈 (2行目)
+'''</remarks>
 
 Sub procedureWithoutDocComment()
     Debug.Print "procedure without doc comment running."

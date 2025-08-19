@@ -46,14 +46,14 @@ myst_heading_anchors = 3
 # -- Options for sphinx_vb_domain --------------------------------------------
 
 module_notes = {
-    '__page__': '補足\n----\n\nページの補足説明',
-    'Module1': '補足\n~~~~\n\nモジュールの補足説明',
+    '__page__': '補足\n----\n\nページの Note',
+    'Module1': '補足\n~~~~\n\nモジュールの Note',
     'Module1.procedureWithoutDocComment': dedent('''
-        補足
+        Note
         ^^^^
 
-        - 関数の補足説明1
-        - 関数の補足説明2
+        - 関数の Note 1行目
+        - 関数の Note 2行目
     '''),
 }
 

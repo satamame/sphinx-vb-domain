@@ -119,19 +119,22 @@ class DocComment:
         return content
 
     def to_module_desc(self) -> str:
+        indent = '   '
         content = ''
         xml_data = xml_to_dict(self.xml)
 
         if 'summary' in xml_data:
             summary_lines = xml_data['summary'].strip().split('\n')
+            content += '.. line-block::\n\n'
             for line in summary_lines:
-                content += f'{line}\n'
+                content += f'{indent}{line}\n'
             content += '\n'
 
         if 'remarks' in xml_data:
             remark_lines = xml_data['remarks'].strip().split('\n')
+            content += '.. line-block::\n\n'
             for line in remark_lines:
-                content += f'{line}\n'
+                content += f'{indent}{line}\n'
             content += '\n'
 
         return content
