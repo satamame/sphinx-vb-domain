@@ -1,4 +1,7 @@
 {
     "ruff.configuration": "pyproject.toml",
-    "ruff.lint.ignore": ["Q000",],
+    "ruff.lint.ignore": [
+        "Q000",
+    ],
+    "kiroAgent.configureMCP": "Disabled",
 }
